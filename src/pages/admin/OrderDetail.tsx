@@ -25,6 +25,13 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
+import { Order, Profile, Coupon, OrderItem } from '@/types';
+
+// Define extended type for order with profiles and coupon
+interface OrderWithDetails extends Order {
+  profiles?: Profile;
+  coupon?: Coupon;
+}
 
 const OrderDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -41,6 +48,8 @@ const OrderDetail = () => {
       
       if (orderError) throw orderError;
       
+      let result: OrderWithDetails = orderData;
+      
       // Fetch profile data separately
       if (orderData.user_id) {
         const { data: profileData, error: profileError } = await supabase
@@ -50,16 +59,24 @@ const OrderDetail = () => {
           .single();
           
         if (!profileError && profileData) {
-          // Combine order and profile data
-          return {
-            ...orderData,
-            profiles: profileData
-          };
+          result.profiles = profileData;
         }
       }
       
-      // If no user_id or profile not found, return just the order
-      return orderData;
+      // Fetch coupon data if applicable
+      if (orderData.coupon_id) {
+        const { data: couponData, error: couponError } = await supabase
+          .from('coupons')
+          .select('*')
+          .eq('id', orderData.coupon_id)
+          .single();
+          
+        if (!couponError && couponData) {
+          result.coupon = couponData;
+        }
+      }
+      
+      return result;
     },
   });
 
@@ -72,7 +89,7 @@ const OrderDetail = () => {
         .eq('order_id', id);
       
       if (error) throw error;
-      return data;
+      return data as OrderItem[];
     },
     enabled: !!order,
   });
