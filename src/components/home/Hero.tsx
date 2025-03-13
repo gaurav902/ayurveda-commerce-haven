@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 
 const Hero = () => {
   return (
-    <section className="relative bg-ayurveda-cream py-16 md:py-24">
+    <section className="relative bg-ayurveda-cream py-16 md:py-24 w-full">
       <div className="container-custom">
         <div className="grid md:grid-cols-2 gap-8 items-center">
           <div className="order-2 md:order-1">
@@ -16,7 +16,7 @@ const Hero = () => {
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <Button className="bg-primary hover:bg-primary-600 text-white" size="lg" asChild>
-                <Link to="/products">Shop Collection</Link>
+                <Link to="/shop">Shop Collection</Link>
               </Button>
               <Button variant="outline" className="border-primary text-primary hover:bg-primary-100" size="lg" asChild>
                 <Link to="/about">Learn More</Link>

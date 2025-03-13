@@ -22,13 +22,6 @@ const Navbar = () => {
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
   const toggleSearch = () => setIsSearchOpen(!isSearchOpen);
 
-  const categories = [
-    { name: "Hair Care", path: "/category/hair-care" },
-    { name: "Skin Care", path: "/category/skin-care" },
-    { name: "Body Care", path: "/category/body-care" },
-    { name: "Wellness", path: "/category/wellness" },
-  ];
-
   return (
     <header className="sticky top-0 z-40 bg-ayurveda-cream/90 backdrop-blur-sm border-b border-border">
       <div className="container-custom py-3">
@@ -46,27 +39,6 @@ const Navbar = () => {
             <Link to="/shop" className="text-foreground hover:text-primary transition-colors">
               Shop
             </Link>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <button className="text-foreground hover:text-primary transition-colors">
-                  Categories
-                </button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="center" className="w-48">
-                {categories.map((category) => (
-                  <DropdownMenuItem key={category.name} asChild>
-                    <Link to={category.path} className="w-full cursor-pointer">
-                      {category.name}
-                    </Link>
-                  </DropdownMenuItem>
-                ))}
-                <DropdownMenuItem asChild>
-                  <Link to="/shop" className="w-full cursor-pointer">
-                    All Products
-                  </Link>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
             <Link to="/about" className="text-foreground hover:text-primary transition-colors">
               About
             </Link>
@@ -151,23 +123,6 @@ const Navbar = () => {
               <Link to="/shop" className="text-foreground hover:text-primary transition-colors">
                 Shop
               </Link>
-              <button 
-                className="text-foreground hover:text-primary transition-colors text-left"
-                onClick={() => {
-                  // Toggle sub-menu for categories on mobile
-                }}
-              >
-                Categories
-              </button>
-              {categories.map((category) => (
-                <Link 
-                  key={category.name}
-                  to={category.path} 
-                  className="text-foreground hover:text-primary transition-colors pl-4 text-sm"
-                >
-                  {category.name}
-                </Link>
-              ))}
               <Link to="/about" className="text-foreground hover:text-primary transition-colors">
                 About
               </Link>

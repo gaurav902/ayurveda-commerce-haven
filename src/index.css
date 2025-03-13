@@ -83,6 +83,10 @@
     @apply border-border;
   }
 
+  html, body, #root {
+    @apply w-full min-h-screen overflow-x-hidden;
+  }
+
   body {
     @apply bg-background text-foreground font-sans;
   }
@@ -94,7 +98,7 @@
 
 @layer components {
   .container-custom {
-    @apply px-4 md:px-6 lg:px-8 mx-auto max-w-7xl;
+    @apply px-4 md:px-6 lg:px-8 mx-auto max-w-7xl w-full;
   }
   
   .btn-primary {

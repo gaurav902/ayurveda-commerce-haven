@@ -30,6 +30,7 @@ import PrivateRoute from "./components/auth/PrivateRoute";
 import AdminRoute from "./components/auth/AdminRoute";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
+import CategoryPage from "./pages/shop/CategoryPage";
 
 const queryClient = new QueryClient();
 
@@ -47,6 +48,7 @@ const App = () => (
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
               <Route path="/shop" element={<ProductsPage />} />
+              <Route path="/category/:slug" element={<CategoryPage />} />
               <Route path="/product/:id" element={<ProductDetail />} />
               <Route path="/cart" element={<Cart />} />
               <Route path="/about" element={<About />} />

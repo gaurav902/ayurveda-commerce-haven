@@ -34,7 +34,7 @@ const categories = [
 
 const Categories = () => {
   return (
-    <section className="py-16 bg-ayurveda-cream/30">
+    <section className="py-16 bg-ayurveda-cream/30 w-full">
       <div className="container-custom">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-serif mb-3 text-primary-900">Shop by Category</h2>
