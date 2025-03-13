@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { 
   Card, 
   CardContent, 
@@ -15,6 +15,7 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import Layout from "@/components/layout/Layout";
 import { Eye, EyeOff } from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -22,8 +23,13 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+  const { signIn, isAdmin } = useAuth();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // Get the redirect path from location state, or default to dashboard
+  const from = (location.state as any)?.from?.pathname || "/";
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!email || !password) {
@@ -33,21 +39,22 @@ const Login = () => {
     
     setIsLoading(true);
     
-    // In a real application, you would validate and send to your authentication API
-    setTimeout(() => {
-      // For demo purposes - login as admin if specific credentials
-      if (email === "admin@example.com" && password === "admin123") {
-        localStorage.setItem("userRole", "admin");
-        toast.success("Welcome back, Admin!");
-        navigate("/admin/dashboard");
-      } else {
-        // Regular user login
-        localStorage.setItem("userRole", "user");
-        toast.success("Welcome back!");
-        navigate("/dashboard");
-      }
-      setIsLoading(false);
-    }, 1000);
+    const { error } = await signIn(email, password);
+    
+    if (!error) {
+      // Wait a moment for auth state to update
+      setTimeout(() => {
+        // Redirect based on role
+        if (isAdmin) {
+          navigate("/admin/dashboard");
+        } else {
+          // Redirect to the page they were trying to access or home
+          navigate(from);
+        }
+      }, 500);
+    }
+    
+    setIsLoading(false);
   };
 
   const togglePasswordVisibility = () => {
