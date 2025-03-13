@@ -28,9 +28,10 @@ import { useToast } from '@/hooks/use-toast';
 import { Order, Profile, Coupon, OrderItem } from '@/types';
 
 // Define extended type for order with profiles and coupon
-interface OrderWithDetails extends Order {
+interface OrderWithDetails extends Omit<Order, 'status'> {
   profiles?: Profile;
   coupon?: Coupon;
+  status: string; // Allow any string value from the database
 }
 
 const OrderDetail = () => {
@@ -48,7 +49,7 @@ const OrderDetail = () => {
       
       if (orderError) throw orderError;
       
-      let result: OrderWithDetails = orderData;
+      let result = orderData as unknown as OrderWithDetails;
       
       // Fetch profile data separately
       if (orderData.user_id) {

@@ -26,6 +26,7 @@ export interface ProductCategory {
 export interface Profile {
   id: string;
   full_name: string | null;
+  email?: string | null; // Added email property
   address: string | null;
   city: string | null;
   state: string | null;
