@@ -1,247 +1,220 @@
 
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import Layout from "@/components/layout/Layout";
-import UserDashboardSidebar from "@/components/dashboard/UserDashboardSidebar";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { toast } from "sonner";
-import { User, Mail, Phone } from "lucide-react";
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/context/AuthContext';
+import Layout from '@/components/layout/Layout';
+import UserDashboardSidebar from '@/components/dashboard/UserDashboardSidebar';
+import { Button } from '@/components/ui/button';
+import { formatCurrency, formatDate } from '@/lib/utils';
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Separator } from '@/components/ui/separator';
+import { ExternalLink, Package, ShoppingBag, User } from 'lucide-react';
+import { Order } from '@/types';
 
 const UserDashboard = () => {
-  const [isLoading, setIsLoading] = useState(true);
-  const [isEditing, setIsEditing] = useState(false);
-  const navigate = useNavigate();
+  const { user, profile, updateProfile } = useAuth();
   
-  // User data - in a real app, this would come from your API
-  const [userData, setUserData] = useState({
-    firstName: "John",
-    lastName: "Doe",
-    email: "john.doe@example.com",
-    phone: "+1 (555) 123-4567",
-    avatar: "https://i.pravatar.cc/150?img=68"
-  });
-
-  // Form data for editing
-  const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    phone: ""
-  });
-
-  useEffect(() => {
-    // Check authentication
-    const userRole = localStorage.getItem("userRole");
-    if (!userRole) {
-      navigate("/login");
-      return;
-    }
-
-    // Simulate loading data
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-      setFormData({
-        firstName: userData.firstName,
-        lastName: userData.lastName,
-        email: userData.email,
-        phone: userData.phone
-      });
-    }, 500);
-
-    return () => clearTimeout(timer);
-  }, [navigate, userData]);
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    // In a real app, you would send this data to your API
-    setIsLoading(true);
-    
-    setTimeout(() => {
-      setUserData({
-        ...userData,
-        firstName: formData.firstName,
-        lastName: formData.lastName,
-        email: formData.email,
-        phone: formData.phone
-      });
+  const { data: recentOrders, isLoading: ordersLoading } = useQuery({
+    queryKey: ['recentUserOrders'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('orders')
+        .select('*')
+        .eq('user_id', user?.id)
+        .order('created_at', { ascending: false })
+        .limit(3);
       
-      setIsEditing(false);
-      setIsLoading(false);
-      toast.success("Profile updated successfully!");
-    }, 1000);
-  };
+      if (error) throw error;
+      return data as Order[];
+    },
+    enabled: !!user,
+  });
 
-  if (isLoading) {
-    return (
-      <Layout>
-        <div className="container py-8">
-          <div className="animate-pulse flex flex-col space-y-4">
-            <div className="h-8 bg-gray-200 rounded w-1/4"></div>
-            <div className="h-64 bg-gray-200 rounded"></div>
-          </div>
-        </div>
-      </Layout>
-    );
-  }
+  const { data: orderCount } = useQuery({
+    queryKey: ['userOrderCount'],
+    queryFn: async () => {
+      const { count, error } = await supabase
+        .from('orders')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', user?.id);
+      
+      if (error) throw error;
+      return count || 0;
+    },
+    enabled: !!user,
+  });
+
+  const getStatusColorClass = (status: string) => {
+    switch (status) {
+      case 'pending': return 'bg-yellow-500';
+      case 'processing': return 'bg-blue-500';
+      case 'shipped': return 'bg-purple-500';
+      case 'delivered': return 'bg-green-500';
+      case 'cancelled': return 'bg-red-500';
+      default: return 'bg-gray-500';
+    }
+  };
 
   return (
     <Layout>
-      <div className="container py-8">
-        <h1 className="text-3xl font-serif mb-8">My Dashboard</h1>
-        
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          <div className="md:col-span-1">
-            <UserDashboardSidebar />
-          </div>
+      <div className="container mx-auto px-4 py-8">
+        <div className="flex flex-col md:flex-row gap-8">
+          <UserDashboardSidebar />
           
-          <div className="md:col-span-3">
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between">
-                <CardTitle>Personal Information</CardTitle>
-                {!isEditing && (
-                  <Button 
-                    variant="outline" 
-                    onClick={() => setIsEditing(true)}
-                  >
-                    Edit Profile
-                  </Button>
-                )}
-              </CardHeader>
-              <CardContent>
-                {isEditing ? (
-                  <form onSubmit={handleSubmit} className="space-y-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="firstName">First Name</Label>
-                        <Input
-                          id="firstName"
-                          name="firstName"
-                          value={formData.firstName}
-                          onChange={handleInputChange}
-                          required
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="lastName">Last Name</Label>
-                        <Input
-                          id="lastName"
-                          name="lastName"
-                          value={formData.lastName}
-                          onChange={handleInputChange}
-                          required
-                        />
-                      </div>
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="email">Email</Label>
-                      <Input
-                        id="email"
-                        name="email"
-                        type="email"
-                        value={formData.email}
-                        onChange={handleInputChange}
-                        required
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="phone">Phone</Label>
-                      <Input
-                        id="phone"
-                        name="phone"
-                        value={formData.phone}
-                        onChange={handleInputChange}
-                      />
-                    </div>
-                    <div className="flex space-x-4 pt-4">
-                      <Button type="submit" className="bg-primary hover:bg-primary-600">
-                        Save Changes
-                      </Button>
-                      <Button 
-                        type="button" 
-                        variant="outline" 
-                        onClick={() => setIsEditing(false)}
-                      >
-                        Cancel
-                      </Button>
-                    </div>
-                  </form>
-                ) : (
-                  <div className="space-y-6">
-                    <div className="flex items-center">
-                      <img 
-                        src={userData.avatar} 
-                        alt="User" 
-                        className="w-20 h-20 rounded-full mr-6"
-                      />
-                      <div>
-                        <h3 className="text-xl font-medium">
-                          {userData.firstName} {userData.lastName}
-                        </h3>
-                        <p className="text-sm text-muted-foreground">Customer since 2023</p>
-                      </div>
-                    </div>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
-                      <div className="flex">
-                        <User className="w-5 h-5 mr-3 text-muted-foreground" />
-                        <div>
-                          <p className="text-sm text-muted-foreground">Full Name</p>
-                          <p>{userData.firstName} {userData.lastName}</p>
-                        </div>
-                      </div>
-                      <div className="flex">
-                        <Mail className="w-5 h-5 mr-3 text-muted-foreground" />
-                        <div>
-                          <p className="text-sm text-muted-foreground">Email</p>
-                          <p>{userData.email}</p>
-                        </div>
-                      </div>
-                      <div className="flex">
-                        <Phone className="w-5 h-5 mr-3 text-muted-foreground" />
-                        <div>
-                          <p className="text-sm text-muted-foreground">Phone</p>
-                          <p>{userData.phone}</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
+          <div className="flex-1">
+            <h1 className="text-3xl font-bold mb-6">Dashboard</h1>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
               <Card>
-                <CardHeader>
-                  <CardTitle>Recent Orders</CardTitle>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-lg flex items-center">
+                    <User className="mr-2 h-5 w-5" /> Account
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-muted-foreground">You haven't placed any orders yet.</p>
-                  <Button className="mt-4 bg-primary hover:bg-primary-600" asChild>
-                    <a href="/products">Browse Products</a>
-                  </Button>
+                  <p className="text-sm">{profile?.full_name || user?.email}</p>
+                  <p className="text-sm text-gray-500">Member since {formatDate(profile?.created_at || '')}</p>
                 </CardContent>
+                <CardFooter>
+                  <Link to="/dashboard">
+                    <Button variant="outline" size="sm">Manage Account</Button>
+                  </Link>
+                </CardFooter>
               </Card>
               
               <Card>
-                <CardHeader>
-                  <CardTitle>Wishlist</CardTitle>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-lg flex items-center">
+                    <Package className="mr-2 h-5 w-5" /> Orders
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-muted-foreground">Your wishlist is empty.</p>
-                  <Button className="mt-4 bg-primary hover:bg-primary-600" asChild>
-                    <a href="/products">Discover Products</a>
-                  </Button>
+                  <p className="text-2xl font-bold">{orderCount}</p>
+                  <p className="text-sm text-gray-500">Total orders placed</p>
                 </CardContent>
+                <CardFooter>
+                  <Link to="/dashboard/orders">
+                    <Button variant="outline" size="sm">View Orders</Button>
+                  </Link>
+                </CardFooter>
               </Card>
+              
+              <Card>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-lg flex items-center">
+                    <ShoppingBag className="mr-2 h-5 w-5" /> Shopping
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm">Browse our latest products</p>
+                  <p className="text-sm text-gray-500">Find new Ayurvedic products</p>
+                </CardContent>
+                <CardFooter>
+                  <Link to="/shop">
+                    <Button variant="outline" size="sm">Shop Now</Button>
+                  </Link>
+                </CardFooter>
+              </Card>
+            </div>
+            
+            <div className="space-y-6">
+              <div>
+                <div className="flex justify-between items-center mb-4">
+                  <h2 className="text-xl font-semibold">Recent Orders</h2>
+                  <Link to="/dashboard/orders">
+                    <Button variant="ghost" size="sm">View All</Button>
+                  </Link>
+                </div>
+                
+                {ordersLoading ? (
+                  <div className="flex justify-center my-6">
+                    <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary"></div>
+                  </div>
+                ) : recentOrders && recentOrders.length > 0 ? (
+                  <div className="space-y-4">
+                    {recentOrders.map((order) => (
+                      <Card key={order.id} className="overflow-hidden">
+                        <CardHeader className="bg-gray-50 pb-2">
+                          <div className="flex flex-col sm:flex-row justify-between">
+                            <div>
+                              <CardTitle className="text-lg">Order #{order.id.slice(0, 8)}</CardTitle>
+                              <p className="text-sm text-gray-500">Placed on {formatDate(order.created_at)}</p>
+                            </div>
+                            <Badge className={`${getStatusColorClass(order.status)} text-white mt-2 sm:mt-0`}>
+                              {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+                            </Badge>
+                          </div>
+                        </CardHeader>
+                        <CardContent className="pt-4">
+                          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
+                            <div>
+                              <p className="font-medium">Total Amount: {formatCurrency(order.total_amount)}</p>
+                              <p className="text-sm text-gray-500">Payment: {order.payment_status.charAt(0).toUpperCase() + order.payment_status.slice(1)}</p>
+                            </div>
+                            <Link to={`/dashboard/order/${order.id}`}>
+                              <Button variant="outline" size="sm" className="mt-2 sm:mt-0">
+                                View Details <ExternalLink className="ml-1 h-4 w-4" />
+                              </Button>
+                            </Link>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                ) : (
+                  <Card>
+                    <CardContent className="text-center py-8">
+                      <h3 className="text-lg font-medium">No orders yet</h3>
+                      <p className="text-sm text-gray-500 mt-2">You haven't placed any orders yet.</p>
+                      <div className="mt-6">
+                        <Link to="/shop">
+                          <Button>Start Shopping</Button>
+                        </Link>
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
+              </div>
+              
+              <Separator />
+              
+              <div>
+                <h2 className="text-xl font-semibold mb-4">Account Information</h2>
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Profile Details</CardTitle>
+                    <CardDescription>Your personal information</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-2">
+                      <div>
+                        <span className="font-medium">Name:</span> {profile?.full_name || 'Not set'}
+                      </div>
+                      <div>
+                        <span className="font-medium">Email:</span> {profile?.email || user?.email}
+                      </div>
+                      <div>
+                        <span className="font-medium">Phone:</span> {profile?.phone || 'Not set'}
+                      </div>
+                      <div>
+                        <span className="font-medium">Address:</span> {profile?.address ? (
+                          <span>
+                            {profile.address}, {profile.city}, {profile.state}, {profile.pincode}
+                          </span>
+                        ) : (
+                          'Not set'
+                        )}
+                      </div>
+                    </div>
+                  </CardContent>
+                  <CardFooter>
+                    <Button variant="outline">Edit Profile</Button>
+                  </CardFooter>
+                </Card>
+              </div>
             </div>
           </div>
         </div>
