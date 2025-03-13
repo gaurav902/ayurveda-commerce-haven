@@ -33,14 +33,33 @@ const OrderDetail = () => {
   const { data: order, isLoading: orderLoading, refetch } = useQuery({
     queryKey: ['adminOrder', id],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data: orderData, error: orderError } = await supabase
         .from('orders')
-        .select('*, profiles:user_id(*), coupon:coupon_id(*)')
+        .select('*')
         .eq('id', id)
         .single();
       
-      if (error) throw error;
-      return data;
+      if (orderError) throw orderError;
+      
+      // Fetch profile data separately
+      if (orderData.user_id) {
+        const { data: profileData, error: profileError } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', orderData.user_id)
+          .single();
+          
+        if (!profileError && profileData) {
+          // Combine order and profile data
+          return {
+            ...orderData,
+            profiles: profileData
+          };
+        }
+      }
+      
+      // If no user_id or profile not found, return just the order
+      return orderData;
     },
   });
 
