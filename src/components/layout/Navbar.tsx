@@ -10,10 +10,14 @@ import {
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
+import { useCart } from "@/context/CartContext";
+import { useAuth } from "@/context/AuthContext";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const { cartCount } = useCart();
+  const { user } = useAuth();
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
   const toggleSearch = () => setIsSearchOpen(!isSearchOpen);
@@ -39,10 +43,13 @@ const Navbar = () => {
             <Link to="/" className="text-foreground hover:text-primary transition-colors">
               Home
             </Link>
+            <Link to="/shop" className="text-foreground hover:text-primary transition-colors">
+              Shop
+            </Link>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button className="text-foreground hover:text-primary transition-colors">
-                  Shop
+                  Categories
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="center" className="w-48">
@@ -54,7 +61,7 @@ const Navbar = () => {
                   </DropdownMenuItem>
                 ))}
                 <DropdownMenuItem asChild>
-                  <Link to="/products" className="w-full cursor-pointer">
+                  <Link to="/shop" className="w-full cursor-pointer">
                     All Products
                   </Link>
                 </DropdownMenuItem>
@@ -78,9 +85,11 @@ const Navbar = () => {
             </Link>
             <Link to="/cart" className="text-foreground hover:text-primary transition-colors relative">
               <ShoppingCart size={20} />
-              <span className="absolute -top-2 -right-2 bg-ayurveda-amber text-primary-900 text-xs font-medium rounded-full w-5 h-5 flex items-center justify-center">
-                0
-              </span>
+              {cartCount > 0 && (
+                <span className="absolute -top-2 -right-2 bg-ayurveda-amber text-primary-900 text-xs font-medium rounded-full w-5 h-5 flex items-center justify-center">
+                  {cartCount > 99 ? '99+' : cartCount}
+                </span>
+              )}
             </Link>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -89,15 +98,25 @@ const Navbar = () => {
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-48">
-                <DropdownMenuItem asChild>
-                  <Link to="/login" className="w-full cursor-pointer">Login</Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link to="/register" className="w-full cursor-pointer">Register</Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link to="/dashboard" className="w-full cursor-pointer">Dashboard</Link>
-                </DropdownMenuItem>
+                {user ? (
+                  <>
+                    <DropdownMenuItem asChild>
+                      <Link to="/dashboard" className="w-full cursor-pointer">Dashboard</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link to="/dashboard/orders" className="w-full cursor-pointer">My Orders</Link>
+                    </DropdownMenuItem>
+                  </>
+                ) : (
+                  <>
+                    <DropdownMenuItem asChild>
+                      <Link to="/login" className="w-full cursor-pointer">Login</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link to="/register" className="w-full cursor-pointer">Register</Link>
+                    </DropdownMenuItem>
+                  </>
+                )}
               </DropdownMenuContent>
             </DropdownMenu>
 
@@ -129,9 +148,17 @@ const Navbar = () => {
               <Link to="/" className="text-foreground hover:text-primary transition-colors">
                 Home
               </Link>
-              <Link to="/products" className="text-foreground hover:text-primary transition-colors">
+              <Link to="/shop" className="text-foreground hover:text-primary transition-colors">
                 Shop
               </Link>
+              <button 
+                className="text-foreground hover:text-primary transition-colors text-left"
+                onClick={() => {
+                  // Toggle sub-menu for categories on mobile
+                }}
+              >
+                Categories
+              </button>
               {categories.map((category) => (
                 <Link 
                   key={category.name}
@@ -148,12 +175,25 @@ const Navbar = () => {
                 Contact
               </Link>
               <div className="pt-2 border-t border-border">
-                <Link to="/login" className="block py-2 text-foreground hover:text-primary transition-colors">
-                  Login
-                </Link>
-                <Link to="/register" className="block py-2 text-foreground hover:text-primary transition-colors">
-                  Register
-                </Link>
+                {user ? (
+                  <>
+                    <Link to="/dashboard" className="block py-2 text-foreground hover:text-primary transition-colors">
+                      Dashboard
+                    </Link>
+                    <Link to="/dashboard/orders" className="block py-2 text-foreground hover:text-primary transition-colors">
+                      My Orders
+                    </Link>
+                  </>
+                ) : (
+                  <>
+                    <Link to="/login" className="block py-2 text-foreground hover:text-primary transition-colors">
+                      Login
+                    </Link>
+                    <Link to="/register" className="block py-2 text-foreground hover:text-primary transition-colors">
+                      Register
+                    </Link>
+                  </>
+                )}
               </div>
             </div>
           </nav>
