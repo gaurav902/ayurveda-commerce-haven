@@ -4,11 +4,6 @@ import { useNavigate } from "react-router-dom";
 import Layout from "@/components/layout/Layout";
 import AdminSidebar from "@/components/admin/AdminSidebar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { supabase } from "@/integrations/supabase/client";
-import { Download, Search, MessageSquare, Trash2, Eye, MailOpen, Mail } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
 import {
   Table,
   TableBody,
@@ -24,28 +19,25 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Textarea } from "@/components/ui/textarea";
+import { Mail, Eye, Trash2, Check, X } from "lucide-react";
+import { ContactSubmission } from "@/types";
 
-interface ContactSubmission {
-  id: string;
-  name: string;
-  email: string;
-  subject: string;
-  message: string;
-  status: 'new' | 'read' | 'replied';
-  created_at: string;
-}
+const statusColors = {
+  new: "bg-blue-100 text-blue-800",
+  pending: "bg-yellow-100 text-yellow-800",
+  resolved: "bg-green-100 text-green-800",
+  closed: "bg-gray-100 text-gray-800",
+};
 
 const AdminContactSubmissions = () => {
   const [submissions, setSubmissions] = useState<ContactSubmission[]>([]);
+  const [selectedSubmission, setSelectedSubmission] = useState<ContactSubmission | null>(null);
+  const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedSubmissions, setSelectedSubmissions] = useState<string[]>([]);
-  const [viewSubmission, setViewSubmission] = useState<ContactSubmission | null>(null);
-  const [replyText, setReplyText] = useState("");
-  const [isSendingReply, setIsSendingReply] = useState(false);
-  
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -70,136 +62,62 @@ const AdminContactSubmissions = () => {
     }
   };
 
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(e.target.value);
+  const handleViewSubmission = (submission: ContactSubmission) => {
+    setSelectedSubmission(submission);
+    setIsViewDialogOpen(true);
   };
 
-  const handleSelectSubmission = (id: string) => {
-    setSelectedSubmissions((prev) =>
-      prev.includes(id)
-        ? prev.filter((submissionId) => submissionId !== id)
-        : [...prev, id]
-    );
-  };
+  const handleUpdateStatus = async (id: string, newStatus: string) => {
+    try {
+      const { error } = await supabase
+        .from('contact_submissions')
+        .update({ status: newStatus, updated_at: new Date().toISOString() })
+        .eq('id', id);
 
-  const handleSelectAll = () => {
-    if (selectedSubmissions.length === filteredSubmissions.length) {
-      setSelectedSubmissions([]);
-    } else {
-      setSelectedSubmissions(filteredSubmissions.map((submission) => submission.id));
-    }
-  };
-
-  const handleViewSubmission = async (submission: ContactSubmission) => {
-    setViewSubmission(submission);
-    
-    // If the submission is new, mark it as read
-    if (submission.status === 'new') {
-      try {
-        const { error } = await supabase
-          .from('contact_submissions')
-          .update({ status: 'read' })
-          .eq('id', submission.id);
-
-        if (error) throw error;
-        
-        // Update the local state
-        setSubmissions(submissions.map(sub => 
-          sub.id === submission.id ? { ...sub, status: 'read' } : sub
-        ));
-      } catch (error) {
-        console.error("Error updating submission status:", error);
+      if (error) throw error;
+      
+      setSubmissions(submissions.map(submission => 
+        submission.id === id 
+          ? { ...submission, status: newStatus, updated_at: new Date().toISOString() } 
+          : submission
+      ));
+      
+      if (selectedSubmission && selectedSubmission.id === id) {
+        setSelectedSubmission({ ...selectedSubmission, status: newStatus, updated_at: new Date().toISOString() });
       }
+      
+      toast.success(`Status updated to ${newStatus}`);
+    } catch (error) {
+      console.error("Error updating status:", error);
+      toast.error("Failed to update status");
     }
   };
 
-  const handleCloseDialog = () => {
-    setViewSubmission(null);
-    setReplyText("");
-  };
-
-  const handleDeleteSelected = async () => {
-    if (!selectedSubmissions.length) return;
-    
-    if (!confirm(`Are you sure you want to delete ${selectedSubmissions.length} submission(s)?`)) {
+  const handleDeleteSubmission = async (id: string) => {
+    if (!confirm("Are you sure you want to delete this submission? This action cannot be undone.")) {
       return;
     }
-
+    
     try {
       const { error } = await supabase
         .from('contact_submissions')
         .delete()
-        .in('id', selectedSubmissions);
+        .eq('id', id);
 
       if (error) throw error;
       
-      setSubmissions(submissions.filter(submission => !selectedSubmissions.includes(submission.id)));
-      setSelectedSubmissions([]);
-      toast.success(`${selectedSubmissions.length} submission(s) deleted successfully`);
+      setSubmissions(submissions.filter(submission => submission.id !== id));
+      
+      if (isViewDialogOpen && selectedSubmission?.id === id) {
+        setIsViewDialogOpen(false);
+      }
+      
+      toast.success("Contact submission deleted successfully");
     } catch (error) {
-      console.error("Error deleting submissions:", error);
-      toast.error("Failed to delete submissions");
+      console.error("Error deleting submission:", error);
+      toast.error("Failed to delete submission");
     }
   };
-
-  const handleSendReply = async () => {
-    if (!viewSubmission || !replyText.trim()) return;
-    
-    setIsSendingReply(true);
-    
-    try {
-      // In a real app, you would send an email here
-      // For this demo, we'll just update the status
-      const { error } = await supabase
-        .from('contact_submissions')
-        .update({ status: 'replied' })
-        .eq('id', viewSubmission.id);
-
-      if (error) throw error;
-      
-      // Update the local state
-      setSubmissions(submissions.map(sub => 
-        sub.id === viewSubmission.id ? { ...sub, status: 'replied' } : sub
-      ));
-      
-      toast.success(`Reply sent to ${viewSubmission.email}`);
-      handleCloseDialog();
-    } catch (error) {
-      console.error("Error sending reply:", error);
-      toast.error("Failed to send reply");
-    } finally {
-      setIsSendingReply(false);
-    }
-  };
-
-  const exportToCSV = () => {
-    const csvData = [
-      ["Name", "Email", "Subject", "Status", "Date"],
-      ...filteredSubmissions.map((submission) => [
-        submission.name,
-        submission.email,
-        submission.subject,
-        submission.status,
-        new Date(submission.created_at).toLocaleDateString(),
-      ]),
-    ];
-
-    const csvContent =
-      "data:text/csv;charset=utf-8," + csvData.map((row) => row.join(",")).join("\n");
-    const encodedUri = encodeURI(csvContent);
-    const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
-    link.setAttribute("download", `contact_submissions_${new Date().toISOString().split("T")[0]}.csv`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
-
-  const filteredSubmissions = submissions.filter((submission) =>
-    submission.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    submission.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    submission.subject.toLowerCase().includes(searchTerm.toLowerCase())
-  );
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -210,19 +128,6 @@ const AdminContactSubmissions = () => {
       hour: '2-digit',
       minute: '2-digit'
     });
-  };
-
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case 'new':
-        return <Badge className="bg-blue-500">New</Badge>;
-      case 'read':
-        return <Badge variant="outline">Read</Badge>;
-      case 'replied':
-        return <Badge className="bg-green-500">Replied</Badge>;
-      default:
-        return <Badge variant="outline">{status}</Badge>;
-    }
   };
 
   if (isLoading) {
@@ -250,119 +155,68 @@ const AdminContactSubmissions = () => {
           
           <div className="md:col-span-4 space-y-6">
             <Card className="shadow-md">
-              <CardHeader className="flex flex-col sm:flex-row justify-between gap-4">
+              <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <MessageSquare className="h-5 w-5 text-primary" />
+                  <Mail className="h-5 w-5 text-primary" />
                   <span>Contact Submissions ({submissions.length})</span>
                 </CardTitle>
-                
-                <div className="flex flex-col sm:flex-row sm:items-center gap-3">
-                  <div className="relative">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      placeholder="Search contact submissions..."
-                      className="pl-9 w-full sm:w-[300px]"
-                      value={searchTerm}
-                      onChange={handleSearch}
-                    />
-                  </div>
-                  
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="flex items-center gap-1"
-                    onClick={exportToCSV}
-                  >
-                    <Download className="h-4 w-4" />
-                    Export
-                  </Button>
-                </div>
               </CardHeader>
               
               <CardContent>
                 {submissions.length === 0 ? (
                   <div className="text-center py-12">
-                    <MessageSquare className="h-12 w-12 mx-auto text-muted-foreground mb-3" />
+                    <Mail className="h-12 w-12 mx-auto text-muted-foreground mb-3" />
                     <h3 className="text-lg font-medium mb-2">No contact submissions yet</h3>
                     <p className="text-muted-foreground">
-                      When users submit the contact form, their messages will appear here.
+                      When customers submit the contact form, their messages will appear here.
                     </p>
                   </div>
                 ) : (
-                  <div>
-                    <div className="flex justify-between mb-4">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={handleSelectAll}
-                      >
-                        {selectedSubmissions.length === filteredSubmissions.length
-                          ? "Deselect All"
-                          : "Select All"}
-                      </Button>
-                      
-                      {selectedSubmissions.length > 0 && (
-                        <Button
-                          variant="destructive"
-                          size="sm"
-                          className="flex items-center gap-1"
-                          onClick={handleDeleteSelected}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                          Delete Selected ({selectedSubmissions.length})
-                        </Button>
-                      )}
-                    </div>
-                    
-                    <div className="rounded-md border">
-                      <Table>
-                        <TableHeader>
-                          <TableRow>
-                            <TableHead className="w-12">
-                              <span className="sr-only">Select</span>
-                            </TableHead>
-                            <TableHead>Name</TableHead>
-                            <TableHead>Email</TableHead>
-                            <TableHead>Subject</TableHead>
-                            <TableHead>Status</TableHead>
-                            <TableHead>Date</TableHead>
-                            <TableHead className="w-12">Actions</TableHead>
-                          </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                          {filteredSubmissions.map((submission) => (
-                            <TableRow key={submission.id}>
-                              <TableCell>
-                                <input
-                                  type="checkbox"
-                                  checked={selectedSubmissions.includes(submission.id)}
-                                  onChange={() => handleSelectSubmission(submission.id)}
-                                  className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
-                                />
-                              </TableCell>
-                              <TableCell className="font-medium">
-                                {submission.name}
-                              </TableCell>
-                              <TableCell>{submission.email}</TableCell>
-                              <TableCell>{submission.subject}</TableCell>
-                              <TableCell>{getStatusBadge(submission.status)}</TableCell>
-                              <TableCell>{formatDate(submission.created_at)}</TableCell>
-                              <TableCell>
+                  <div className="rounded-md border overflow-x-auto">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Name</TableHead>
+                          <TableHead>Subject</TableHead>
+                          <TableHead>Date</TableHead>
+                          <TableHead>Status</TableHead>
+                          <TableHead className="text-right">Actions</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {submissions.map((submission) => (
+                          <TableRow key={submission.id}>
+                            <TableCell className="font-medium">{submission.name}</TableCell>
+                            <TableCell>{submission.subject}</TableCell>
+                            <TableCell>{formatDate(submission.created_at)}</TableCell>
+                            <TableCell>
+                              <Badge variant="outline" className={`${submission.status === 'new' ? 'bg-blue-100 text-blue-800' : submission.status === 'pending' ? 'bg-yellow-100 text-yellow-800' : submission.status === 'resolved' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`}>
+                                {submission.status.charAt(0).toUpperCase() + submission.status.slice(1)}
+                              </Badge>
+                            </TableCell>
+                            <TableCell className="text-right">
+                              <div className="flex justify-end gap-2">
                                 <Button
-                                  variant="ghost"
-                                  size="sm"
+                                  variant="outline"
+                                  size="icon"
                                   onClick={() => handleViewSubmission(submission)}
-                                  className="h-8 w-8 p-0"
                                 >
-                                  <span className="sr-only">View submission</span>
                                   <Eye className="h-4 w-4" />
                                 </Button>
-                              </TableCell>
-                            </TableRow>
-                          ))}
-                        </TableBody>
-                      </Table>
-                    </div>
+                                
+                                <Button
+                                  variant="destructive"
+                                  size="icon"
+                                  onClick={() => handleDeleteSubmission(submission.id)}
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
                   </div>
                 )}
               </CardContent>
@@ -370,66 +224,87 @@ const AdminContactSubmissions = () => {
           </div>
         </div>
       </div>
-
+      
       {/* View Submission Dialog */}
-      <Dialog open={!!viewSubmission} onOpenChange={(open) => !open && handleCloseDialog()}>
-        <DialogContent className="sm:max-w-xl">
-          <DialogHeader>
-            <DialogTitle>Contact Submission</DialogTitle>
-            <DialogDescription>
-              View the details of this contact submission and reply to the sender
-            </DialogDescription>
-          </DialogHeader>
-
-          {viewSubmission && (
-            <div className="space-y-4 mt-4">
-              <div className="grid gap-2">
-                <h3 className="text-sm font-medium text-muted-foreground">From</h3>
-                <p className="font-medium">{viewSubmission.name} ({viewSubmission.email})</p>
-              </div>
+      <Dialog open={isViewDialogOpen} onOpenChange={setIsViewDialogOpen}>
+        <DialogContent className="max-w-md">
+          {selectedSubmission && (
+            <>
+              <DialogHeader>
+                <DialogTitle>{selectedSubmission.subject}</DialogTitle>
+                <DialogDescription>
+                  From: {selectedSubmission.name} ({selectedSubmission.email})
+                </DialogDescription>
+              </DialogHeader>
               
-              <div className="grid gap-2">
-                <h3 className="text-sm font-medium text-muted-foreground">Subject</h3>
-                <p className="font-medium">{viewSubmission.subject}</p>
-              </div>
-              
-              <div className="grid gap-2">
-                <h3 className="text-sm font-medium text-muted-foreground">Message</h3>
-                <div className="p-4 bg-muted rounded-md">
-                  <p className="whitespace-pre-wrap">{viewSubmission.message}</p>
+              <div className="mt-4 space-y-4">
+                <div>
+                  <div className="text-sm font-medium mb-1">Message:</div>
+                  <div className="p-3 bg-gray-50 rounded-md whitespace-pre-wrap">
+                    {selectedSubmission.message}
+                  </div>
+                </div>
+                
+                <div>
+                  <div className="text-sm font-medium mb-1">Date:</div>
+                  <div>{formatDate(selectedSubmission.created_at)}</div>
+                </div>
+                
+                <div>
+                  <div className="text-sm font-medium mb-1">Status:</div>
+                  <div className="flex items-center gap-2">
+                    <Badge variant="outline" className={`${selectedSubmission.status === 'new' ? 'bg-blue-100 text-blue-800' : selectedSubmission.status === 'pending' ? 'bg-yellow-100 text-yellow-800' : selectedSubmission.status === 'resolved' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`}>
+                      {selectedSubmission.status.charAt(0).toUpperCase() + selectedSubmission.status.slice(1)}
+                    </Badge>
+                    
+                    <div className="ml-2 flex gap-1">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className={selectedSubmission.status === 'pending' ? 'bg-yellow-100' : ''}
+                        onClick={() => handleUpdateStatus(selectedSubmission.id, 'pending')}
+                      >
+                        Pending
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className={selectedSubmission.status === 'resolved' ? 'bg-green-100' : ''}
+                        onClick={() => handleUpdateStatus(selectedSubmission.id, 'resolved')}
+                      >
+                        <Check className="mr-1 h-3 w-3" />
+                        Resolved
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className={selectedSubmission.status === 'closed' ? 'bg-gray-100' : ''}
+                        onClick={() => handleUpdateStatus(selectedSubmission.id, 'closed')}
+                      >
+                        <X className="mr-1 h-3 w-3" />
+                        Closed
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="flex justify-between pt-4">
+                  <Button
+                    variant="outline"
+                    onClick={() => setIsViewDialogOpen(false)}
+                  >
+                    Close
+                  </Button>
+                  
+                  <a href={`mailto:${selectedSubmission.email}?subject=Re: ${selectedSubmission.subject}`} className="inline-block">
+                    <Button>
+                      <Mail className="mr-2 h-4 w-4" />
+                      Reply via Email
+                    </Button>
+                  </a>
                 </div>
               </div>
-              
-              <div className="grid gap-2 pt-4">
-                <h3 className="text-sm font-medium text-muted-foreground">Reply</h3>
-                <Textarea
-                  placeholder="Type your reply here..."
-                  rows={5}
-                  value={replyText}
-                  onChange={(e) => setReplyText(e.target.value)}
-                />
-              </div>
-              
-              <div className="flex justify-end gap-3 pt-2">
-                <Button variant="outline" onClick={handleCloseDialog}>
-                  Cancel
-                </Button>
-                <Button 
-                  onClick={handleSendReply} 
-                  disabled={!replyText.trim() || isSendingReply}
-                  className="flex items-center gap-1"
-                >
-                  {isSendingReply ? (
-                    <>Sending...</>
-                  ) : (
-                    <>
-                      <Mail className="h-4 w-4" />
-                      Send Reply
-                    </>
-                  )}
-                </Button>
-              </div>
-            </div>
+            </>
           )}
         </DialogContent>
       </Dialog>

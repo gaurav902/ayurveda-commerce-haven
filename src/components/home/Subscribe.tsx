@@ -25,10 +25,10 @@ const Subscribe = () => {
       // Insert the subscription into the database
       const { error } = await supabase
         .from('newsletter_subscribers')
-        .insert([{ 
+        .insert({
           email, 
           receive_notifications: receiveNotifications 
-        }]);
+        });
 
       if (error) {
         if (error.code === '23505') {

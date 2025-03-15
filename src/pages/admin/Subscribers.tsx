@@ -18,13 +18,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { toast } from "sonner";
-
-interface Subscriber {
-  id: string;
-  email: string;
-  receive_notifications: boolean;
-  created_at: string;
-}
+import { Subscriber } from "@/types";
 
 const AdminSubscribers = () => {
   const [subscribers, setSubscribers] = useState<Subscriber[]>([]);

@@ -1,5 +1,3 @@
-
-
 export interface Product {
   id: string;
   name: string;
@@ -97,7 +95,6 @@ export interface CartWithItems extends Cart {
   items: (CartItem & { product: Product })[];
 }
 
-// New interfaces for the added tables
 export interface WishlistItem {
   id: string;
   user_id: string;
@@ -129,4 +126,22 @@ export interface PaymentMethod {
   is_default: boolean;
   created_at: string;
   updated_at: string;
+}
+
+export interface ContactSubmission {
+  id: string;
+  name: string;
+  email: string;
+  subject: string;
+  message: string;
+  status: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Subscriber {
+  id: string;
+  email: string;
+  receive_notifications: boolean;
+  created_at: string;
 }

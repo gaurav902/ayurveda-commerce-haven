@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
@@ -43,13 +42,13 @@ const Contact = () => {
       // Store the contact form submission in Supabase
       const { error } = await supabase
         .from('contact_submissions')
-        .insert([{
+        .insert({
           name: formData.name,
           email: formData.email,
           subject: formData.subject,
           message: formData.message,
           status: 'new'
-        }]);
+        });
 
       if (error) {
         console.error("Error submitting form:", error);
