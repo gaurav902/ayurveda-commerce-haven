@@ -10,6 +10,7 @@ import ProductCard from "@/components/shop/ProductCard";
 import { Filter, ChevronDown, ChevronUp } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { useCart } from "@/context/CartContext";
 
 const CategoryPage = () => {
   const { categoryId } = useParams<{ categoryId: string }>();
@@ -22,6 +23,7 @@ const CategoryPage = () => {
   const [isSortOpen, setIsSortOpen] = useState(false);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const { addToCart } = useCart();
 
   // Fetch category and products
   useEffect(() => {
@@ -356,7 +358,11 @@ const CategoryPage = () => {
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {sortedProducts.map((product) => (
-                  <ProductCard key={product.id} product={product} />
+                  <ProductCard 
+                    key={product.id} 
+                    product={product} 
+                    onAddToCart={() => addToCart(product.id, 1)}
+                  />
                 ))}
               </div>
             )}

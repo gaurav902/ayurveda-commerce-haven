@@ -112,7 +112,8 @@ const OnboardingGuide = () => {
   return (
     <>
       {/* Add a global style for highlighted elements */}
-      <style jsx global>{`
+      <style>
+        {`
         .onboarding-highlight {
           position: relative;
           z-index: 100;
@@ -132,7 +133,8 @@ const OnboardingGuide = () => {
             box-shadow: 0 0 0 0 rgba(216, 164, 92, 0);
           }
         }
-      `}</style>
+        `}
+      </style>
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="sm:max-w-md">
