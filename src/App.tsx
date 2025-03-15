@@ -31,6 +31,10 @@ import AdminRoute from "./components/auth/AdminRoute";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
 import CategoryPage from "./pages/shop/CategoryPage";
+import Wishlist from "./pages/dashboard/Wishlist";
+import Addresses from "./pages/dashboard/Addresses";
+import PaymentMethods from "./pages/dashboard/PaymentMethods";
+import Settings from "./pages/dashboard/Settings";
 
 const queryClient = new QueryClient();
 
@@ -53,6 +57,7 @@ const App = () => (
               <Route path="/cart" element={<Cart />} />
               <Route path="/about" element={<About />} />
               <Route path="/contact" element={<Contact />} />
+              <Route path="/wishlist" element={<PrivateRoute><Wishlist /></PrivateRoute>} />
 
               {/* Protected User Routes */}
               <Route path="/checkout" element={<PrivateRoute><Checkout /></PrivateRoute>} />
@@ -60,6 +65,10 @@ const App = () => (
               <Route path="/dashboard" element={<PrivateRoute><UserDashboard /></PrivateRoute>} />
               <Route path="/dashboard/orders" element={<PrivateRoute><Orders /></PrivateRoute>} />
               <Route path="/dashboard/order/:id" element={<PrivateRoute><OrderDetail /></PrivateRoute>} />
+              <Route path="/dashboard/wishlist" element={<PrivateRoute><Wishlist /></PrivateRoute>} />
+              <Route path="/dashboard/addresses" element={<PrivateRoute><Addresses /></PrivateRoute>} />
+              <Route path="/dashboard/payment-methods" element={<PrivateRoute><PaymentMethods /></PrivateRoute>} />
+              <Route path="/dashboard/settings" element={<PrivateRoute><Settings /></PrivateRoute>} />
 
               {/* Admin Routes */}
               <Route path="/admin/dashboard" element={<AdminRoute><AdminDashboard /></AdminRoute>} />

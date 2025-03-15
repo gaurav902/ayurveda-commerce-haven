@@ -13,9 +13,10 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Separator } from '@/components/ui/separator';
 import { ExternalLink, Package, ShoppingBag, User } from 'lucide-react';
 import { Order } from '@/types';
+import EditProfileDialog from '@/components/dashboard/EditProfileDialog';
 
 const UserDashboard = () => {
-  const { user, profile, updateProfile } = useAuth();
+  const { user, profile } = useAuth();
   
   const { data: recentOrders, isLoading: ordersLoading } = useQuery({
     queryKey: ['recentUserOrders'],
@@ -211,7 +212,7 @@ const UserDashboard = () => {
                     </div>
                   </CardContent>
                   <CardFooter>
-                    <Button variant="outline">Edit Profile</Button>
+                    <EditProfileDialog />
                   </CardFooter>
                 </Card>
               </div>
