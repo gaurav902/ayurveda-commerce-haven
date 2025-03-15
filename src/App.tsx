@@ -35,6 +35,12 @@ import Wishlist from "./pages/dashboard/Wishlist";
 import Addresses from "./pages/dashboard/Addresses";
 import PaymentMethods from "./pages/dashboard/PaymentMethods";
 import Settings from "./pages/dashboard/Settings";
+import PrivacyPolicy from "./pages/policies/PrivacyPolicy";
+import TermsConditions from "./pages/policies/TermsConditions";
+import ShippingPolicy from "./pages/policies/ShippingPolicy";
+import ReturnPolicy from "./pages/policies/ReturnPolicy";
+import AdminSubscribers from "./pages/admin/Subscribers";
+import AdminContactSubmissions from "./pages/admin/ContactSubmissions";
 
 const queryClient = new QueryClient();
 
@@ -58,6 +64,12 @@ const App = () => (
               <Route path="/about" element={<About />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/wishlist" element={<PrivateRoute><Wishlist /></PrivateRoute>} />
+              
+              {/* Policy Pages */}
+              <Route path="/policies/privacy" element={<PrivacyPolicy />} />
+              <Route path="/policies/terms" element={<TermsConditions />} />
+              <Route path="/policies/shipping" element={<ShippingPolicy />} />
+              <Route path="/policies/returns" element={<ReturnPolicy />} />
 
               {/* Protected User Routes */}
               <Route path="/checkout" element={<PrivateRoute><Checkout /></PrivateRoute>} />
@@ -79,6 +91,8 @@ const App = () => (
               <Route path="/admin/coupons" element={<AdminRoute><Coupons /></AdminRoute>} />
               <Route path="/admin/orders" element={<AdminRoute><AdminOrders /></AdminRoute>} />
               <Route path="/admin/orders/:id" element={<AdminRoute><AdminOrderDetail /></AdminRoute>} />
+              <Route path="/admin/subscribers" element={<AdminRoute><AdminSubscribers /></AdminRoute>} />
+              <Route path="/admin/contact-submissions" element={<AdminRoute><AdminContactSubmissions /></AdminRoute>} />
 
               {/* Catch-all */}
               <Route path="*" element={<NotFound />} />

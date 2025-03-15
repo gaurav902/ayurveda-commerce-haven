@@ -1,18 +1,18 @@
 
 import Layout from "@/components/layout/Layout";
 import Hero from "@/components/home/Hero";
-import FeaturedProducts from "@/components/home/FeaturedProducts";
-import Categories from "@/components/home/Categories";
+import FeaturedProduct from "@/components/home/FeaturedProduct";
 import AboutSection from "@/components/home/AboutSection";
 import Testimonials from "@/components/home/Testimonials";
 import Subscribe from "@/components/home/Subscribe";
+import OnboardingGuide from "@/components/onboarding/OnboardingGuide";
 
 const Index = () => {
   return (
     <Layout>
+      <OnboardingGuide />
       <Hero />
-      <Categories />
-      <FeaturedProducts />
+      <FeaturedProduct />
       <AboutSection />
       <Testimonials />
       <Subscribe />
