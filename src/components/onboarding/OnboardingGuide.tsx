@@ -1,40 +1,70 @@
 
 import { useEffect, useState } from "react";
 import { X } from "lucide-react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { useAuth } from "@/context/AuthContext";
 
-// Step content for different parts of the site
-const steps = [
+// Step content for different scenarios
+const dashboardSteps = [
   {
-    title: "Welcome to Ayurveda Haven",
-    description: "We're excited to have you here! Let us show you around our website and help you discover the ancient wisdom of Ayurveda.",
+    title: "Welcome to Your Dashboard",
+    description: "This is your personal hub for managing orders, profile, and exploring Ayurveda Haven products.",
     element: null,
   },
   {
-    title: "Discover Our Products",
-    description: "Browse our complete collection in the Shop section. Filter by category, sort by price, and find the perfect products for your needs.",
-    element: "nav-shop",
+    title: "Your Orders",
+    description: "Track all your orders in one place. See order status, history, and details of past purchases.",
+    element: "dashboard-orders",
   },
   {
-    title: "Your Account",
-    description: "Create an account to save your favorite products, track orders, and enjoy a personalized shopping experience.",
-    element: "nav-account",
+    title: "Profile Settings",
+    description: "Update your personal information, shipping addresses, and account preferences here.",
+    element: "dashboard-profile",
   },
   {
-    title: "Shopping Cart",
-    description: "Your cart keeps track of items you want to purchase. View and modify your selections before checkout.",
-    element: "nav-cart",
+    title: "Shopping Wishlist",
+    description: "View and manage products you've saved for future purchases.",
+    element: "dashboard-wishlist",
   },
   {
-    title: "Featured Products",
-    description: "Discover our highlighted products on the home page - these are our best sellers and new arrivals.",
-    element: "featured-products",
+    title: "Payment Methods",
+    description: "Manage your saved payment methods for faster checkout.",
+    element: "dashboard-payments",
   },
   {
-    title: "Contact & Support",
-    description: "Have questions? Our Contact page makes it easy to reach our support team for any assistance you need.",
-    element: "nav-contact",
+    title: "Get Started",
+    description: "Explore your dashboard and enjoy your Ayurveda Haven experience!",
+    element: null,
+  },
+];
+
+const checkoutSteps = [
+  {
+    title: "Welcome to Checkout",
+    description: "Complete your purchase by following these simple steps.",
+    element: null,
+  },
+  {
+    title: "Review Your Cart",
+    description: "Verify the items in your cart before proceeding with payment.",
+    element: "checkout-cart-summary",
+  },
+  {
+    title: "Shipping Information",
+    description: "Enter or select your shipping address where you'd like your products delivered.",
+    element: "checkout-shipping",
+  },
+  {
+    title: "Payment Method",
+    description: "Select your preferred payment method to complete your purchase securely.",
+    element: "checkout-payment",
+  },
+  {
+    title: "Complete Order",
+    description: "Review all details and confirm your order.",
+    element: "checkout-submit",
   },
 ];
 
@@ -42,17 +72,45 @@ const OnboardingGuide = () => {
   const [open, setOpen] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
   const [highlight, setHighlight] = useState<string | null>(null);
+  const [steps, setSteps] = useState(dashboardSteps);
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { user } = useAuth();
 
   useEffect(() => {
-    // Check if this is the first visit
-    const hasVisited = localStorage.getItem("hasVisitedBefore");
+    // Determine which steps to use based on the current path
+    const currentPath = location.pathname;
     
-    if (!hasVisited) {
-      // Open the guide for first-time visitors
+    if (currentPath.includes('/dashboard')) {
+      setSteps(dashboardSteps);
+    } else if (currentPath.includes('/checkout') || currentPath.includes('/cart')) {
+      setSteps(checkoutSteps);
+    }
+
+    // Open guide automatically in specific conditions
+    const hasVisitedBefore = localStorage.getItem("hasVisitedBefore");
+    const showOnDashboard = currentPath.includes('/dashboard') && !localStorage.getItem("dashboardGuideShown");
+    const showOnCheckout = (currentPath.includes('/checkout') || currentPath.includes('/cart')) && !localStorage.getItem("checkoutGuideShown");
+    
+    if (showOnDashboard && user) {
       setOpen(true);
+      localStorage.setItem("dashboardGuideShown", "true");
+    } else if (showOnCheckout) {
+      // For checkout/cart, check if user is logged in
+      if (!user) {
+        // Redirect to login if not logged in
+        navigate('/login', { state: { from: location } });
+        return;
+      }
+      setOpen(true);
+      localStorage.setItem("checkoutGuideShown", "true");
+    }
+    
+    // For first time visitors, set the flag
+    if (!hasVisitedBefore) {
       localStorage.setItem("hasVisitedBefore", "true");
     }
-  }, []);
+  }, [location.pathname, user, navigate, location]);
 
   useEffect(() => {
     // Highlight the relevant element when step changes
@@ -71,7 +129,7 @@ const OnboardingGuide = () => {
     return () => {
       setHighlight(null);
     };
-  }, [currentStep, open]);
+  }, [currentStep, open, steps]);
 
   const handleNext = () => {
     if (currentStep < steps.length - 1) {
@@ -108,6 +166,11 @@ const OnboardingGuide = () => {
       };
     }
   }, [highlight]);
+
+  // Only show on dashboard or cart/checkout pages
+  const showGuideButton = location.pathname.includes('/dashboard') || 
+                          location.pathname.includes('/cart') || 
+                          location.pathname.includes('/checkout');
 
   return (
     <>
@@ -174,15 +237,17 @@ const OnboardingGuide = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Button to restart the tour */}
-      <Button
-        variant="outline"
-        size="sm"
-        className="fixed bottom-4 right-4 z-50"
-        onClick={() => setOpen(true)}
-      >
-        Website Guide
-      </Button>
+      {/* Button to restart the tour - only shown on relevant pages */}
+      {showGuideButton && (
+        <Button
+          variant="outline"
+          size="sm"
+          className="fixed bottom-4 right-4 z-50"
+          onClick={() => setOpen(true)}
+        >
+          Website Guide
+        </Button>
+      )}
     </>
   );
 };

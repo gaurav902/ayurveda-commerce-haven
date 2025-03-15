@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import Layout from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,6 +12,7 @@ import { formatCurrency } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import OnboardingGuide from "@/components/onboarding/OnboardingGuide";
 
 const Cart = () => {
   const { cartItems, cartTotal, updateCartItem, removeFromCart, getDiscountedTotal } = useCart();
@@ -96,6 +97,7 @@ const Cart = () => {
 
   return (
     <Layout>
+      <OnboardingGuide />
       <div className="container py-12">
         <h1 className="text-3xl font-serif mb-8">Your Cart</h1>
         
@@ -114,7 +116,7 @@ const Cart = () => {
             <div className="w-full lg:w-2/3">
               <Card>
                 <CardContent className="p-0">
-                  <table className="w-full">
+                  <table className="w-full" id="checkout-cart-summary">
                     <thead className="bg-muted/50">
                       <tr className="text-left">
                         <th className="p-4">Product</th>
@@ -259,6 +261,7 @@ const Cart = () => {
                     size="lg"
                     disabled={cartItems.length === 0}
                     onClick={proceedToCheckout}
+                    id="checkout-submit"
                   >
                     Proceed to Checkout
                   </Button>

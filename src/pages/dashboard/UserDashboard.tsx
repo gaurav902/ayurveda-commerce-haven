@@ -14,6 +14,7 @@ import { Separator } from '@/components/ui/separator';
 import { ExternalLink, Package, ShoppingBag, User } from 'lucide-react';
 import { Order } from '@/types';
 import EditProfileDialog from '@/components/dashboard/EditProfileDialog';
+import OnboardingGuide from '@/components/onboarding/OnboardingGuide';
 
 const UserDashboard = () => {
   const { user, profile } = useAuth();
@@ -61,6 +62,7 @@ const UserDashboard = () => {
 
   return (
     <Layout>
+      <OnboardingGuide />
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col md:flex-row gap-8">
           <UserDashboardSidebar />
@@ -86,7 +88,7 @@ const UserDashboard = () => {
                 </CardFooter>
               </Card>
               
-              <Card>
+              <Card id="dashboard-orders">
                 <CardHeader className="pb-2">
                   <CardTitle className="text-lg flex items-center">
                     <Package className="mr-2 h-5 w-5" /> Orders
@@ -182,7 +184,7 @@ const UserDashboard = () => {
               
               <Separator />
               
-              <div>
+              <div id="dashboard-profile">
                 <h2 className="text-xl font-semibold mb-4">Account Information</h2>
                 <Card>
                   <CardHeader>
