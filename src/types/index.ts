@@ -1,4 +1,5 @@
 
+
 export interface Product {
   id: string;
   name: string;
@@ -94,4 +95,38 @@ export interface CartItem {
 
 export interface CartWithItems extends Cart {
   items: (CartItem & { product: Product })[];
+}
+
+// New interfaces for the added tables
+export interface WishlistItem {
+  id: string;
+  user_id: string;
+  product_id: string;
+  created_at: string;
+  products?: Product;
+}
+
+export interface Address {
+  id: string;
+  user_id: string;
+  address_line: string;
+  city: string;
+  state: string;
+  pincode: string;
+  is_default: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface PaymentMethod {
+  id: string;
+  user_id: string;
+  card_number: string;
+  cardholder_name: string;
+  expiry_month: string;
+  expiry_year: string;
+  card_type: string;
+  is_default: boolean;
+  created_at: string;
+  updated_at: string;
 }
