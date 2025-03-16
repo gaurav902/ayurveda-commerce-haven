@@ -1,3 +1,4 @@
+
 import { supabase } from '@/integrations/supabase/client';
 
 const apiBaseUrl = '/api';
@@ -17,7 +18,7 @@ async function fetchAPI(endpoint, options = {}) {
     ...options,
     headers: {
       ...defaultOptions.headers,
-      ...(options.headers || {})
+      ...((options as any).headers || {})
     },
   };
 
