@@ -1,6 +1,7 @@
 
 import jwt from 'jsonwebtoken';
 import { supabase } from '@/integrations/supabase/client';
+import { User } from '@/types';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret_key';
 const JWT_EXPIRES_IN = '7d';
@@ -44,7 +45,16 @@ export function generateToken(userId) {
   return '';
 }
 
-export async function signUp(email, password, userData = {}) {
+interface UserData {
+  full_name?: string;
+  phone?: string | null;
+  address?: string | null;
+  city?: string | null;
+  state?: string | null;
+  pincode?: string | null;
+}
+
+export async function signUp(email: string, password: string, userData: UserData = {}) {
   try {
     // Create user in Supabase Auth
     const { data: authData, error: authError } = await supabase.auth.signUp({
@@ -100,7 +110,7 @@ export async function signUp(email, password, userData = {}) {
   }
 }
 
-export async function signIn(email, password) {
+export async function signIn(email: string, password: string) {
   try {
     // Sign in with Supabase Auth
     const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
