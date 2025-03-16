@@ -28,7 +28,7 @@ const Navbar = () => {
         <div className="flex items-center justify-between">
           {/* Logo */}
           <Link to="/" className="flex items-center">
-            <span className="text-primary font-serif font-bold text-2xl">TELL ME INDIA</span>
+            <span className="text-primary font-serif font-bold text-2xl">Ayurveda Haven</span>
           </Link>
 
           {/* Desktop Navigation */}

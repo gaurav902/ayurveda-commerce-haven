@@ -8,7 +8,7 @@ const TermsConditions = () => {
       <div className="container py-12">
         <div className="max-w-4xl mx-auto">
           <h1 className="text-3xl font-serif mb-4">Terms and Conditions</h1>
-          <p className="text-muted-foreground mb-8">Last updated: Jan 6, 2025</p>
+          <p className="text-muted-foreground mb-8">Last updated: June 15, 2023</p>
           
           <Separator className="mb-8" />
           
@@ -16,14 +16,14 @@ const TermsConditions = () => {
             <section>
               <h2 className="text-xl font-medium mb-3">Introduction</h2>
               <p className="mb-3">
-                These terms and conditions outline the rules and regulations for the use of tell me india's website. By accessing this website, we assume you accept these terms and conditions in full. Do not continue to use tell me india's website if you do not accept all of the terms and conditions stated on this page.
+                These terms and conditions outline the rules and regulations for the use of Ayurveda Haven's website. By accessing this website, we assume you accept these terms and conditions in full. Do not continue to use Ayurveda Haven's website if you do not accept all of the terms and conditions stated on this page.
               </p>
             </section>
             
             <section>
               <h2 className="text-xl font-medium mb-3">Intellectual Property Rights</h2>
               <p className="mb-3">
-                Other than the content you own, under these terms, Tell me india and/or its licensors own all the intellectual property rights and materials contained in this website.
+                Other than the content you own, under these terms, Ayurveda Haven and/or its licensors own all the intellectual property rights and materials contained in this website.
               </p>
               <p>
                 You are granted limited license only for purposes of viewing the material contained on this website.
@@ -48,31 +48,31 @@ const TermsConditions = () => {
             <section>
               <h2 className="text-xl font-medium mb-3">Your Content</h2>
               <p className="mb-3">
-                In these terms and conditions, "Your Content" shall mean any audio, video, text, images or other material you choose to display on this website. By displaying Your Content, you grant Tell me india a non-exclusive, worldwide irrevocable, sub licensable license to use, reproduce, adapt, publish, translate and distribute it in any and all media.
+                In these terms and conditions, "Your Content" shall mean any audio, video, text, images or other material you choose to display on this website. By displaying Your Content, you grant Ayurveda Haven a non-exclusive, worldwide irrevocable, sub licensable license to use, reproduce, adapt, publish, translate and distribute it in any and all media.
               </p>
               <p className="mb-3">
-                Your Content must be your own and must not be invading any third-party's rights. Tell me india reserves the right to remove any of Your Content from this website at any time without notice.
+                Your Content must be your own and must not be invading any third-party's rights. Ayurveda Haven reserves the right to remove any of Your Content from this website at any time without notice.
               </p>
             </section>
             
             <section>
               <h2 className="text-xl font-medium mb-3">No Warranties</h2>
               <p className="mb-3">
-                This website is provided "as is," with all faults, and tell me india makes no express or implied representations or warranties, of any kind related to this website or the materials contained on this website.
+                This website is provided "as is," with all faults, and Ayurveda Haven makes no express or implied representations or warranties, of any kind related to this website or the materials contained on this website.
               </p>
             </section>
             
             <section>
               <h2 className="text-xl font-medium mb-3">Limitation of Liability</h2>
               <p className="mb-3">
-                In no event shall Tell me india, nor any of its officers, directors and employees, be held liable for anything arising out of or in any way connected with your use of this website whether such liability is under contract.
+                In no event shall Ayurveda Haven, nor any of its officers, directors and employees, be held liable for anything arising out of or in any way connected with your use of this website whether such liability is under contract.
               </p>
             </section>
             
             <section>
               <h2 className="text-xl font-medium mb-3">Indemnification</h2>
               <p className="mb-3">
-                You hereby indemnify to the fullest extent Tell me india from and against any and/or all liabilities, costs, demands, causes of action, damages and expenses arising in any way related to your breach of any of the provisions of these terms.
+                You hereby indemnify to the fullest extent Ayurveda Haven from and against any and/or all liabilities, costs, demands, causes of action, damages and expenses arising in any way related to your breach of any of the provisions of these terms.
               </p>
             </section>
             
@@ -86,7 +86,7 @@ const TermsConditions = () => {
             <section>
               <h2 className="text-xl font-medium mb-3">Variation of Terms</h2>
               <p className="mb-3">
-                Tell me india is permitted to revise these terms at any time as it sees fit, and by using this website you are expected to review these terms on a regular basis.
+                Ayurveda Haven is permitted to revise these terms at any time as it sees fit, and by using this website you are expected to review these terms on a regular basis.
               </p>
             </section>
             

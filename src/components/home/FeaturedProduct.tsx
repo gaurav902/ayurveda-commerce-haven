@@ -11,10 +11,10 @@ const FeaturedProduct = () => {
   // This would come from your Supabase database in a real application
   const featuredProduct = {
     id: "feed-h-lotion",
-    name: "FEED-H ULTRA",
-    price: 999,
-    image: "https://feed-h.tellmeindia.com/Assets2/feed-h-ultra.png",
-    description: "TellMeIndia proudly presents Feed-H Ultra – a game-changer in hair care! Infused with nature’s finest ingredients, it’s crafted to nourish every strand, making your hair healthier, stronger, and more vibrant. Experience the magic of true hair nourishment with Feed-H Ultra!",
+    name: "FEED-H Lotion",
+    price: 599,
+    image: "https://images.unsplash.com/photo-1556760544-74068565f05c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
+    description: "Our revolutionary FEED-H Lotion is an Ayurvedic formulation that nourishes and revitalizes skin with a unique blend of traditional herbs and modern science.",
     benefits: [
       "Deep hydration with natural ingredients",
       "Revitalizes and enhances skin's natural glow",
@@ -61,9 +61,9 @@ const FeaturedProduct = () => {
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
-          <h2 className="text-3xl font-serif mb-2 text-primary-900">Introducing FEED-H ULTRA</h2>
+          <h2 className="text-3xl font-serif mb-2 text-primary-900">Introducing FEED-H Lotion</h2>
           <p className="text-muted-foreground max-w-3xl mx-auto">
-           Our signature Ayurvedic blend for ultimate hair nourishment and strength
+            Our signature Ayurvedic formulation designed to transform your daily skincare routine
           </p>
         </motion.div>
 

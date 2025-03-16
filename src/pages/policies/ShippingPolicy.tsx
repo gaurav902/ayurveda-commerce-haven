@@ -1,3 +1,4 @@
+
 import Layout from "@/components/layout/Layout";
 import { Separator } from "@/components/ui/separator";
 
@@ -7,7 +8,7 @@ const ShippingPolicy = () => {
       <div className="container py-12">
         <div className="max-w-4xl mx-auto">
           <h1 className="text-3xl font-serif mb-4">Shipping Policy</h1>
-          <p className="text-muted-foreground mb-8">Last updated: Jan 06, 2025</p>
+          <p className="text-muted-foreground mb-8">Last updated: June 15, 2023</p>
           
           <Separator className="mb-8" />
           
@@ -70,14 +71,14 @@ const ShippingPolicy = () => {
             <section>
               <h2 className="text-xl font-medium mb-3">Customs, Duties, and Taxes</h2>
               <p className="mb-3">
-                Tell Me India is not responsible for any customs and taxes applied to your order. All fees imposed during or after shipping are the responsibility of the customer (tariffs, taxes, etc.).
+                Ayurveda Haven is not responsible for any customs and taxes applied to your order. All fees imposed during or after shipping are the responsibility of the customer (tariffs, taxes, etc.).
               </p>
             </section>
             
             <section>
               <h2 className="text-xl font-medium mb-3">Damages</h2>
               <p className="mb-3">
-                Tell Me India is not liable for any products damaged or lost during shipping. If you received your order damaged, please contact the shipment carrier to file a claim.
+                Ayurveda Haven is not liable for any products damaged or lost during shipping. If you received your order damaged, please contact the shipment carrier to file a claim.
               </p>
               <p className="mb-3">
                 Please save all packaging materials and damaged goods before filing a claim.
@@ -97,14 +98,14 @@ const ShippingPolicy = () => {
             <section>
               <h2 className="text-xl font-medium mb-3">Lost/Stolen Packages</h2>
               <p className="mb-3">
-                Tell Me India is not responsible for lost or stolen packages that show confirmation of delivery by the shipping carrier. If your package is lost or stolen, please contact the carrier directly to file a claim.
+                Ayurveda Haven is not responsible for lost or stolen packages that show confirmation of delivery by the shipping carrier. If your package is lost or stolen, please contact the carrier directly to file a claim.
               </p>
             </section>
             
             <section>
               <h2 className="text-xl font-medium mb-3">Contact Us</h2>
               <p>
-                If you have any questions about our shipping policy, please contact us at sales@tellmeindia.com.
+                If you have any questions about our shipping policy, please contact us at shipping@ayurvedahaven.com.
               </p>
             </section>
           </div>

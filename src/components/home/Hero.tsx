@@ -9,10 +9,10 @@ const Hero = () => {
         <div className="grid md:grid-cols-2 gap-8 items-center">
           <div className="order-2 md:order-1">
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif font-medium mb-4 text-primary-900 leading-tight">
-            Reviving Ancient Ethics, Redeeming Modern India
+              Discover the Ancient Wisdom of Ayurvedic Beauty
             </h1>
             <p className="text-lg mb-8 text-muted-foreground max-w-md">
-            Reviving ancient wisdom to enrich modern life—blending tradition with innovation for a future that honors our heritage. Join the journey!
+              Natural, holistic hair and skin care products made with time-tested Ayurvedic herbs and ingredients.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <Button className="bg-primary hover:bg-primary-600 text-white" size="lg" asChild>
@@ -26,7 +26,7 @@ const Hero = () => {
           <div className="order-1 md:order-2">
             <div className="relative rounded-lg overflow-hidden aspect-[4/3]">
               <img
-                src="https://sevantiinstitute.com/wp-content/uploads/2016/07/Slide3-darken.jpg"
+                src="https://images.unsplash.com/photo-1518495973542-4542c06a5843"
                 alt="Ayurvedic botanicals and herbs"
                 className="w-full h-full object-cover rounded-lg"
               />

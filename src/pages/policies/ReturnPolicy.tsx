@@ -1,3 +1,4 @@
+
 import Layout from "@/components/layout/Layout";
 import { Separator } from "@/components/ui/separator";
 
@@ -7,7 +8,7 @@ const ReturnPolicy = () => {
       <div className="container py-12">
         <div className="max-w-4xl mx-auto">
           <h1 className="text-3xl font-serif mb-4">Return & Refund Policy</h1>
-          <p className="text-muted-foreground mb-8">Last updated: Jan 06, 2025</p>
+          <p className="text-muted-foreground mb-8">Last updated: June 15, 2023</p>
           
           <Separator className="mb-8" />
           
@@ -61,14 +62,14 @@ const ReturnPolicy = () => {
             <section>
               <h2 className="text-xl font-medium mb-3">Damaged or Defective Items</h2>
               <p className="mb-3">
-                If you receive a damaged or defective item, please contact us immediately at support@tellmeindia.com with details of the product and the damage. We will work with you to resolve the issue and arrange a return if necessary.
+                If you receive a damaged or defective item, please contact us immediately at support@ayurvedahaven.com with details of the product and the damage. We will work with you to resolve the issue and arrange a return if necessary.
               </p>
             </section>
             
             <section>
               <h2 className="text-xl font-medium mb-3">Exchanges</h2>
               <p className="mb-3">
-                We only replace items if they are defective or damaged. If you need to exchange it for the same item, send us an email at sales@tellmeindia.com and send your item to: Tell Me India Returns Department,C-409, Block C, Vaishali Nagar, Jaipur, Rajasthan 302021, India.
+                We only replace items if they are defective or damaged. If you need to exchange it for the same item, send us an email at support@ayurvedahaven.com and send your item to: Ayurveda Haven Returns Department, 123 Wellness Lane, Mumbai, MH 400001, India.
               </p>
             </section>
             
@@ -85,14 +86,14 @@ const ReturnPolicy = () => {
             <section>
               <h2 className="text-xl font-medium mb-3">Late or Missing Refunds</h2>
               <p className="mb-3">
-                If you haven't received a refund yet, first check your bank account again. Then contact your credit card company, it may take some time before your refund is officially posted. Next contact your bank. There is often some processing time before a refund is posted. If you've done all of this and you still have not received your refund yet, please contact us at refunds@tellmeindia.com.
+                If you haven't received a refund yet, first check your bank account again. Then contact your credit card company, it may take some time before your refund is officially posted. Next contact your bank. There is often some processing time before a refund is posted. If you've done all of this and you still have not received your refund yet, please contact us at refunds@ayurvedahaven.com.
               </p>
             </section>
             
             <section>
               <h2 className="text-xl font-medium mb-3">Questions</h2>
               <p>
-                If you have any questions about our returns and refunds policy, please contact us at returns@tellmeindia.com or call us at +91 (911) 929-5094.
+                If you have any questions about our returns and refunds policy, please contact us at returns@ayurvedahaven.com or call us at +91 (123) 456-7890.
               </p>
             </section>
           </div>

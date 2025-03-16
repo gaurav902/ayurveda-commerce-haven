@@ -52,7 +52,7 @@ const EditProfileDialog = () => {
       
       toast.success('Profile updated successfully');
       setIsOpen(false);
-    } catch (error: any) {
+    } catch (error) {
       console.error('Error updating profile:', error);
       toast.error('Failed to update profile');
     } finally {
@@ -86,7 +86,7 @@ const EditProfileDialog = () => {
             <Input
               id="phone"
               name="phone"
-              value={formData.phone || ''}
+              value={formData.phone}
               onChange={handleInputChange}
               placeholder="Enter your phone number"
             />
@@ -97,7 +97,7 @@ const EditProfileDialog = () => {
             <Input
               id="address"
               name="address"
-              value={formData.address || ''}
+              value={formData.address}
               onChange={handleInputChange}
               placeholder="Enter your address"
             />
@@ -109,7 +109,7 @@ const EditProfileDialog = () => {
               <Input
                 id="city"
                 name="city"
-                value={formData.city || ''}
+                value={formData.city}
                 onChange={handleInputChange}
                 placeholder="City"
               />
@@ -120,7 +120,7 @@ const EditProfileDialog = () => {
               <Input
                 id="state"
                 name="state"
-                value={formData.state || ''}
+                value={formData.state}
                 onChange={handleInputChange}
                 placeholder="State"
               />
@@ -132,7 +132,7 @@ const EditProfileDialog = () => {
             <Input
               id="pincode"
               name="pincode"
-              value={formData.pincode || ''}
+              value={formData.pincode}
               onChange={handleInputChange}
               placeholder="Pincode"
             />

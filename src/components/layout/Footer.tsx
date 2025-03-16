@@ -9,9 +9,9 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* About */}
           <div>
-            <h3 className="text-xl font-serif mb-4">TELL ME INDIA</h3>
+            <h3 className="text-xl font-serif mb-4">Ayurveda Haven</h3>
             <p className="text-sm mb-4 text-white/90">
-            Infusing life with the essence of tradition, crafting a future rich in wisdom and joy.
+              Embracing the ancient wisdom of Ayurveda to bring harmony and balance to your hair and beauty care routine.
             </p>
             <div className="flex space-x-4">
               <a href="#" className="hover:text-ayurveda-amber transition-colors" aria-label="Instagram">
@@ -42,7 +42,7 @@ const Footer = () => {
               </li>
               <li>
                 <Link to="/blog" className="hover:text-ayurveda-amber transition-colors">
-                  Blog
+                  Ayurvedic Blog
                 </Link>
               </li>
               <li>
@@ -53,28 +53,28 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Legal */}
+          {/* Categories */}
           <div>
-            <h4 className="text-lg font-serif mb-4">Legal</h4>
+            <h4 className="text-lg font-serif mb-4">Categories</h4>
             <ul className="space-y-2 text-sm text-white/90">
               <li>
-                <Link to="/policies/terms" className="hover:text-ayurveda-amber transition-colors">
-                Terms & Conditions
+                <Link to="/category/hair-care" className="hover:text-ayurveda-amber transition-colors">
+                  Hair Care
                 </Link>
               </li>
               <li>
-                <Link to="/policies/Privacy" className="hover:text-ayurveda-amber transition-colors">
-                Privacy Policy
+                <Link to="/category/skin-care" className="hover:text-ayurveda-amber transition-colors">
+                  Skin Care
                 </Link>
               </li>
               <li>
-                <Link to="/policies/shipping" className="hover:text-ayurveda-amber transition-colors">
-                Shipping Policy
+                <Link to="/category/body-care" className="hover:text-ayurveda-amber transition-colors">
+                  Body Care
                 </Link>
               </li>
               <li>
-                <Link to="/policies/returns" className="hover:text-ayurveda-amber transition-colors">
-                Return & Refund Policy
+                <Link to="/category/wellness" className="hover:text-ayurveda-amber transition-colors">
+                  Wellness
                 </Link>
               </li>
             </ul>
@@ -86,15 +86,15 @@ const Footer = () => {
             <ul className="space-y-3 text-sm text-white/90">
               <li className="flex">
                 <MapPin size={18} className="mr-2 flex-shrink-0" />
-                <span>C-409, Block C , Vaishali Nagar , 302021</span>
+                <span>123 Ayurveda Way, Harmony Hills, 12345</span>
               </li>
               <li className="flex">
                 <Phone size={18} className="mr-2 flex-shrink-0" />
-                <span>+91 (911) 929-5094</span>
+                <span>+1 (555) 123-4567</span>
               </li>
               <li className="flex">
                 <Mail size={18} className="mr-2 flex-shrink-0" />
-                <span>sales@tellmeindia.com</span>
+                <span>contact@ayurvedahaven.com</span>
               </li>
             </ul>
           </div>
@@ -103,7 +103,7 @@ const Footer = () => {
         <div className="mt-8 pt-8 border-t border-white/20">
           <div className="flex flex-col md:flex-row justify-between">
             <p className="text-sm text-white/70 mb-4 md:mb-0">
-              &copy; {new Date().getFullYear()}  TELL ME INDIA. All rights reserved.
+              &copy; {new Date().getFullYear()} Ayurveda Haven. All rights reserved.
             </p>
             <div className="flex space-x-4 text-sm text-white/70">
               <Link to="/privacy-policy" className="hover:text-white transition-colors">
