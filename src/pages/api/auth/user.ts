@@ -1,7 +1,7 @@
 
 import { getCurrentUser } from '@/lib/auth/auth';
 
-export default async function handler(req, res) {
+export default async function handler(req: any, res: any) {
   if (req.method !== 'GET') {
     res.setHeader('Allow', ['GET']);
     return res.status(405).end(`Method ${req.method} Not Allowed`);
@@ -21,7 +21,7 @@ export default async function handler(req, res) {
     }
     
     res.status(200).json({ user });
-  } catch (error) {
+  } catch (error: any) {
     res.status(400).json({ error: error.message });
   }
 }

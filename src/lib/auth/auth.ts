@@ -7,15 +7,17 @@ const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret_key';
 const JWT_EXPIRES_IN = '7d';
 
 // Client-safe JWT verification that works in both Node.js and browser
-export function verifyJWTToken(token) {
+export function verifyJWTToken(token: string) {
   try {
     // In browser environment, we'll use a simpler approach
     if (typeof window !== 'undefined') {
       const base64Url = token.split('.')[1];
       const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-      const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
-        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-      }).join(''));
+      const jsonPayload = decodeURIComponent(
+        window.atob(base64).split('').map(function(c) {
+          return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join('')
+      );
       
       const payload = JSON.parse(jsonPayload);
       const now = Date.now() / 1000;
@@ -37,7 +39,7 @@ export function verifyJWTToken(token) {
 }
 
 // Only used on the server side
-export function generateToken(userId) {
+export function generateToken(userId: string) {
   if (typeof window === 'undefined') {
     return jwt.sign({ userId }, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
   }
@@ -63,6 +65,7 @@ export async function signUp(email: string, password: string, userData: UserData
     });
     
     if (authError) throw new Error(authError.message);
+    if (!authData?.user) throw new Error('User creation failed');
     
     // Update profile with additional data
     const { data: profileData, error: profileError } = await supabase
@@ -94,7 +97,7 @@ export async function signUp(email: string, password: string, userData: UserData
     return {
       user: {
         id: user.id,
-        email: authData.user.email,
+        email: authData.user.email || '',
         full_name: user.full_name,
         is_admin: user.is_admin,
         phone: user.phone,
@@ -102,10 +105,10 @@ export async function signUp(email: string, password: string, userData: UserData
         city: user.city,
         state: user.state,
         pincode: user.pincode,
-      },
+      } as User,
       token,
     };
-  } catch (error) {
+  } catch (error: any) {
     throw error;
   }
 }
@@ -119,6 +122,7 @@ export async function signIn(email: string, password: string) {
     });
     
     if (authError) throw new Error(authError.message);
+    if (!authData?.user) throw new Error('Sign in failed');
     
     // Get user profile
     const { data: user, error: userError } = await supabase
@@ -135,7 +139,7 @@ export async function signIn(email: string, password: string) {
     return {
       user: {
         id: user.id,
-        email: authData.user.email,
+        email: authData.user.email || '',
         full_name: user.full_name,
         is_admin: user.is_admin,
         phone: user.phone,
@@ -143,20 +147,20 @@ export async function signIn(email: string, password: string) {
         city: user.city,
         state: user.state,
         pincode: user.pincode,
-      },
+      } as User,
       token,
     };
-  } catch (error) {
+  } catch (error: any) {
     throw error;
   }
 }
 
-export async function getCurrentUser(token) {
+export async function getCurrentUser(token: string) {
   try {
     if (!token) return null;
     
     // Verify token
-    const decoded = verifyJWTToken(token);
+    const decoded = verifyJWTToken(token) as { userId: string } | null;
     if (!decoded) return null;
     
     // Get current session
@@ -175,7 +179,7 @@ export async function getCurrentUser(token) {
     
     return {
       id: user.id,
-      email: session.user.email,
+      email: session.user.email || '',
       full_name: user.full_name,
       is_admin: user.is_admin,
       phone: user.phone,
@@ -185,13 +189,13 @@ export async function getCurrentUser(token) {
       pincode: user.pincode,
       created_at: user.created_at,
       updated_at: user.updated_at,
-    };
+    } as User;
   } catch (error) {
     return null;
   }
 }
 
 // Export a renamed version of verify for compatibility
-export function verifyToken(token) {
+export function verifyToken(token: string) {
   return verifyJWTToken(token);
 }

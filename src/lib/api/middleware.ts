@@ -2,7 +2,7 @@
 import { verifyJWTToken } from '@/lib/auth/auth';
 import { supabase } from '@/integrations/supabase/client';
 
-export async function authenticateUser(req, res, next) {
+export async function authenticateUser(req: any, res: any, next: any) {
   try {
     const token = req.headers.authorization?.split(' ')[1];
     
@@ -10,7 +10,7 @@ export async function authenticateUser(req, res, next) {
       return res.status(401).json({ error: 'Unauthorized' });
     }
     
-    const decoded = verifyJWTToken(token);
+    const decoded = verifyJWTToken(token) as { userId: string } | null;
     
     if (!decoded) {
       return res.status(401).json({ error: 'Invalid token' });
@@ -27,8 +27,8 @@ export async function authenticateUser(req, res, next) {
       return res.status(401).json({ error: 'User not found' });
     }
     
-    // Use auth to get email
-    const { data: authUser, error: authError } = await supabase.auth.getUser(decoded.userId);
+    // Get user email from auth
+    const { data: { user: authUser }, error: authError } = await supabase.auth.getUser();
     
     if (authError || !authUser) {
       return res.status(401).json({ error: 'User not found in auth' });
@@ -36,7 +36,7 @@ export async function authenticateUser(req, res, next) {
     
     req.user = {
       id: user.id,
-      email: authUser.user.email,
+      email: authUser.email || '',
       is_admin: user.is_admin,
     };
     
@@ -46,7 +46,7 @@ export async function authenticateUser(req, res, next) {
   }
 }
 
-export async function requireAdmin(req, res, next) {
+export async function requireAdmin(req: any, res: any, next: any) {
   try {
     await authenticateUser(req, res, () => {
       if (!req.user.is_admin) {

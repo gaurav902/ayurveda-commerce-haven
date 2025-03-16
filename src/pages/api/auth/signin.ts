@@ -1,7 +1,7 @@
 
 import { signIn } from '@/lib/auth/auth';
 
-export default async function handler(req, res) {
+export default async function handler(req: any, res: any) {
   if (req.method !== 'POST') {
     res.setHeader('Allow', ['POST']);
     return res.status(405).end(`Method ${req.method} Not Allowed`);
@@ -17,7 +17,7 @@ export default async function handler(req, res) {
     const { user, token } = await signIn(email, password);
     
     res.status(200).json({ user, token });
-  } catch (error) {
+  } catch (error: any) {
     res.status(400).json({ error: error.message });
   }
 }

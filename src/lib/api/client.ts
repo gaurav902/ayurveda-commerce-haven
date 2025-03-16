@@ -4,7 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 const apiBaseUrl = '/api';
 
 // Generic fetch function
-async function fetchAPI(endpoint, options = {}) {
+async function fetchAPI(endpoint: string, options: any = {}) {
   const url = `${apiBaseUrl}${endpoint}`;
   
   const defaultOptions = {
@@ -18,7 +18,7 @@ async function fetchAPI(endpoint, options = {}) {
     ...options,
     headers: {
       ...defaultOptions.headers,
-      ...((options as any).headers || {})
+      ...(options.headers || {})
     },
   };
 
@@ -48,11 +48,11 @@ export const api = {
     return fetchAPI('/products');
   },
   
-  getProduct: async (id) => {
+  getProduct: async (id: string) => {
     return fetchAPI(`/products/${id}`);
   },
   
-  createProduct: async (productData) => {
+  createProduct: async (productData: any) => {
     return fetchAPI('/products', {
       method: 'POST',
       body: JSON.stringify(productData),
@@ -60,7 +60,7 @@ export const api = {
     });
   },
   
-  updateProduct: async (id, productData) => {
+  updateProduct: async (id: string, productData: any) => {
     return fetchAPI(`/products/${id}`, {
       method: 'PUT',
       body: JSON.stringify(productData),
@@ -68,7 +68,7 @@ export const api = {
     });
   },
   
-  deleteProduct: async (id) => {
+  deleteProduct: async (id: string) => {
     return fetchAPI(`/products/${id}`, {
       method: 'DELETE',
       headers: getAuthHeader(),
@@ -80,11 +80,11 @@ export const api = {
     return fetchAPI('/categories');
   },
   
-  getCategory: async (id) => {
+  getCategory: async (id: string) => {
     return fetchAPI(`/categories/${id}`);
   },
   
-  createCategory: async (categoryData) => {
+  createCategory: async (categoryData: any) => {
     return fetchAPI('/categories', {
       method: 'POST',
       body: JSON.stringify(categoryData),
@@ -92,7 +92,7 @@ export const api = {
     });
   },
   
-  updateCategory: async (id, categoryData) => {
+  updateCategory: async (id: string, categoryData: any) => {
     return fetchAPI(`/categories/${id}`, {
       method: 'PUT',
       body: JSON.stringify(categoryData),
@@ -100,7 +100,7 @@ export const api = {
     });
   },
   
-  deleteCategory: async (id) => {
+  deleteCategory: async (id: string) => {
     return fetchAPI(`/categories/${id}`, {
       method: 'DELETE',
       headers: getAuthHeader(),
@@ -114,13 +114,13 @@ export const api = {
     });
   },
   
-  getOrder: async (id) => {
+  getOrder: async (id: string) => {
     return fetchAPI(`/orders/${id}`, {
       headers: getAuthHeader(),
     });
   },
   
-  createOrder: async (orderData) => {
+  createOrder: async (orderData: any) => {
     return fetchAPI('/orders', {
       method: 'POST',
       body: JSON.stringify(orderData),
@@ -128,7 +128,7 @@ export const api = {
     });
   },
   
-  updateOrder: async (id, orderData) => {
+  updateOrder: async (id: string, orderData: any) => {
     return fetchAPI(`/orders/${id}`, {
       method: 'PUT',
       body: JSON.stringify(orderData),
@@ -143,7 +143,7 @@ export const api = {
     });
   },
   
-  addToWishlist: async (productId) => {
+  addToWishlist: async (productId: string) => {
     return fetchAPI('/wishlist', {
       method: 'POST',
       body: JSON.stringify({ product_id: productId }),
@@ -151,7 +151,7 @@ export const api = {
     });
   },
   
-  removeFromWishlist: async (productId) => {
+  removeFromWishlist: async (productId: string) => {
     return fetchAPI(`/wishlist/${productId}`, {
       method: 'DELETE',
       headers: getAuthHeader(),
@@ -165,7 +165,7 @@ export const api = {
     });
   },
   
-  addToCart: async (productId, quantity = 1) => {
+  addToCart: async (productId: string, quantity = 1) => {
     return fetchAPI('/cart', {
       method: 'POST',
       body: JSON.stringify({ product_id: productId, quantity }),
@@ -173,7 +173,7 @@ export const api = {
     });
   },
   
-  updateCartItem: async (itemId, quantity) => {
+  updateCartItem: async (itemId: string, quantity: number) => {
     return fetchAPI(`/cart/${itemId}`, {
       method: 'PUT',
       body: JSON.stringify({ quantity }),
@@ -181,7 +181,7 @@ export const api = {
     });
   },
   
-  removeFromCart: async (itemId) => {
+  removeFromCart: async (itemId: string) => {
     return fetchAPI(`/cart/${itemId}`, {
       method: 'DELETE',
       headers: getAuthHeader(),
@@ -202,7 +202,7 @@ export const api = {
     });
   },
   
-  createAddress: async (addressData) => {
+  createAddress: async (addressData: any) => {
     return fetchAPI('/addresses', {
       method: 'POST',
       body: JSON.stringify(addressData),
@@ -210,7 +210,7 @@ export const api = {
     });
   },
   
-  updateAddress: async (id, addressData) => {
+  updateAddress: async (id: string, addressData: any) => {
     return fetchAPI(`/addresses/${id}`, {
       method: 'PUT',
       body: JSON.stringify(addressData),
@@ -218,7 +218,7 @@ export const api = {
     });
   },
   
-  deleteAddress: async (id) => {
+  deleteAddress: async (id: string) => {
     return fetchAPI(`/addresses/${id}`, {
       method: 'DELETE',
       headers: getAuthHeader(),
@@ -232,7 +232,7 @@ export const api = {
     });
   },
   
-  createPaymentMethod: async (paymentData) => {
+  createPaymentMethod: async (paymentData: any) => {
     return fetchAPI('/payment-methods', {
       method: 'POST',
       body: JSON.stringify(paymentData),
@@ -240,7 +240,7 @@ export const api = {
     });
   },
   
-  updatePaymentMethod: async (id, paymentData) => {
+  updatePaymentMethod: async (id: string, paymentData: any) => {
     return fetchAPI(`/payment-methods/${id}`, {
       method: 'PUT',
       body: JSON.stringify(paymentData),
@@ -248,7 +248,7 @@ export const api = {
     });
   },
   
-  deletePaymentMethod: async (id) => {
+  deletePaymentMethod: async (id: string) => {
     return fetchAPI(`/payment-methods/${id}`, {
       method: 'DELETE',
       headers: getAuthHeader(),
@@ -256,7 +256,7 @@ export const api = {
   },
   
   // Coupons
-  validateCoupon: async (code) => {
+  validateCoupon: async (code: string) => {
     return fetchAPI(`/coupons/validate`, {
       method: 'POST',
       body: JSON.stringify({ code }),
@@ -264,7 +264,7 @@ export const api = {
   },
   
   // Contact
-  submitContactForm: async (contactData) => {
+  submitContactForm: async (contactData: any) => {
     return fetchAPI('/contact', {
       method: 'POST',
       body: JSON.stringify(contactData),
@@ -272,7 +272,7 @@ export const api = {
   },
   
   // Newsletter
-  subscribeNewsletter: async (email, receiveNotifications = true) => {
+  subscribeNewsletter: async (email: string, receiveNotifications = true) => {
     return fetchAPI('/newsletter', {
       method: 'POST',
       body: JSON.stringify({ email, receive_notifications: receiveNotifications }),
@@ -286,7 +286,7 @@ export const api = {
     });
   },
   
-  updateContactSubmission: async (id, data) => {
+  updateContactSubmission: async (id: string, data: any) => {
     return fetchAPI(`/admin/contact-submissions/${id}`, {
       method: 'PUT',
       body: JSON.stringify(data),
@@ -306,7 +306,7 @@ export const api = {
     });
   },
   
-  createCoupon: async (couponData) => {
+  createCoupon: async (couponData: any) => {
     return fetchAPI('/admin/coupons', {
       method: 'POST',
       body: JSON.stringify(couponData),
@@ -314,7 +314,7 @@ export const api = {
     });
   },
   
-  updateCoupon: async (id, couponData) => {
+  updateCoupon: async (id: string, couponData: any) => {
     return fetchAPI(`/admin/coupons/${id}`, {
       method: 'PUT',
       body: JSON.stringify(couponData),
@@ -322,7 +322,7 @@ export const api = {
     });
   },
   
-  deleteCoupon: async (id) => {
+  deleteCoupon: async (id: string) => {
     return fetchAPI(`/admin/coupons/${id}`, {
       method: 'DELETE',
       headers: getAuthHeader(),
