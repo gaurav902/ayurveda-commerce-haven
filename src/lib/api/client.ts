@@ -1,5 +1,4 @@
-
-import connectToDatabase from '../mongodb/connect';
+import { supabase } from '@/integrations/supabase/client';
 
 const apiBaseUrl = '/api';
 

@@ -1,32 +1,24 @@
 
-import Product from '@/lib/mongodb/models/product.model';
-import connectToDatabase from '@/lib/mongodb/connect';
+import { supabase } from '@/integrations/supabase/client';
 import { authenticateUser, requireAdmin } from '@/lib/api/middleware';
 
 export default async function handler(req, res) {
   const { id } = req.query;
   
-  await connectToDatabase();
-  
   switch (req.method) {
     case 'GET':
       try {
-        const product = await Product.findById(id).lean();
+        const { data: product, error } = await supabase
+          .from('products')
+          .select('*')
+          .eq('id', id)
+          .single();
         
-        if (!product) {
+        if (error || !product) {
           return res.status(404).json({ error: 'Product not found' });
         }
         
-        return res.status(200).json({
-          id: product._id,
-          name: product.name,
-          description: product.description,
-          price: product.price,
-          stock: product.stock,
-          image_url: product.image_url,
-          created_at: product.created_at,
-          updated_at: product.updated_at,
-        });
+        return res.status(200).json(product);
       } catch (error) {
         return res.status(500).json({ error: 'Failed to fetch product' });
       }
@@ -36,33 +28,25 @@ export default async function handler(req, res) {
         await requireAdmin(req, res, async () => {
           const { name, description, price, stock, image_url } = req.body;
           
-          const updatedProduct = await Product.findByIdAndUpdate(
-            id,
-            {
+          const { data: updatedProduct, error } = await supabase
+            .from('products')
+            .update({
               name,
               description,
               price,
               stock,
               image_url,
               updated_at: new Date(),
-            },
-            { new: true }
-          );
+            })
+            .eq('id', id)
+            .select()
+            .single();
           
-          if (!updatedProduct) {
+          if (error || !updatedProduct) {
             return res.status(404).json({ error: 'Product not found' });
           }
           
-          return res.status(200).json({
-            id: updatedProduct._id,
-            name: updatedProduct.name,
-            description: updatedProduct.description,
-            price: updatedProduct.price,
-            stock: updatedProduct.stock,
-            image_url: updatedProduct.image_url,
-            created_at: updatedProduct.created_at,
-            updated_at: updatedProduct.updated_at,
-          });
+          return res.status(200).json(updatedProduct);
         });
       } catch (error) {
         return res.status(500).json({ error: 'Failed to update product' });
@@ -72,9 +56,12 @@ export default async function handler(req, res) {
     case 'DELETE':
       try {
         await requireAdmin(req, res, async () => {
-          const deletedProduct = await Product.findByIdAndDelete(id);
+          const { error } = await supabase
+            .from('products')
+            .delete()
+            .eq('id', id);
           
-          if (!deletedProduct) {
+          if (error) {
             return res.status(404).json({ error: 'Product not found' });
           }
           

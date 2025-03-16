@@ -1,38 +1,51 @@
 
 import { sign, verify } from 'jsonwebtoken';
-import User from '../mongodb/models/user.model';
-import connectToDatabase from '../mongodb/connect';
+import { supabase } from '@/integrations/supabase/client';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret_key';
 const JWT_EXPIRES_IN = '7d';
 
 export async function signUp(email: string, password: string, userData: any = {}) {
   try {
-    await connectToDatabase();
-    
-    // Check if user exists
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      throw new Error('User already exists');
-    }
-    
-    // Create user
-    const user = new User({
+    // Create user in Supabase Auth
+    const { data: authData, error: authError } = await supabase.auth.signUp({
       email,
       password,
-      full_name: userData.full_name || '',
-      ...userData
     });
     
-    await user.save();
+    if (authError) throw new Error(authError.message);
+    
+    // Update profile with additional data
+    const { data: profileData, error: profileError } = await supabase
+      .from('profiles')
+      .update({
+        full_name: userData.full_name || '',
+        phone: userData.phone || null,
+        address: userData.address || null,
+        city: userData.city || null,
+        state: userData.state || null,
+        pincode: userData.pincode || null,
+      })
+      .eq('id', authData.user.id);
+    
+    if (profileError) throw new Error(profileError.message);
     
     // Generate token
-    const token = generateToken(user._id.toString());
+    const token = generateToken(authData.user.id);
+    
+    // Get the updated profile
+    const { data: user, error: userError } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', authData.user.id)
+      .single();
+    
+    if (userError) throw new Error(userError.message);
     
     return {
       user: {
-        id: user._id,
-        email: user.email,
+        id: user.id,
+        email: authData.user.email,
         full_name: user.full_name,
         is_admin: user.is_admin,
         phone: user.phone,
@@ -50,27 +63,30 @@ export async function signUp(email: string, password: string, userData: any = {}
 
 export async function signIn(email: string, password: string) {
   try {
-    await connectToDatabase();
+    // Sign in with Supabase Auth
+    const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
     
-    // Find user
-    const user = await User.findOne({ email }).select('+password');
-    if (!user) {
-      throw new Error('Invalid email or password');
-    }
+    if (authError) throw new Error(authError.message);
     
-    // Check password
-    const isMatch = await user.comparePassword(password);
-    if (!isMatch) {
-      throw new Error('Invalid email or password');
-    }
+    // Get user profile
+    const { data: user, error: userError } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', authData.user.id)
+      .single();
+    
+    if (userError) throw new Error(userError.message);
     
     // Generate token
-    const token = generateToken(user._id.toString());
+    const token = generateToken(authData.user.id);
     
     return {
       user: {
-        id: user._id,
-        email: user.email,
+        id: user.id,
+        email: authData.user.email,
         full_name: user.full_name,
         is_admin: user.is_admin,
         phone: user.phone,
@@ -90,19 +106,27 @@ export async function getCurrentUser(token: string) {
   try {
     if (!token) return null;
     
-    await connectToDatabase();
-    
     // Verify token
     const decoded = verifyToken(token);
     if (!decoded) return null;
     
-    // Find user
-    const user = await User.findById(decoded.userId);
-    if (!user) return null;
+    // Get current session
+    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+    
+    if (sessionError || !session) return null;
+    
+    // Get user profile
+    const { data: user, error: userError } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', decoded.userId)
+      .single();
+    
+    if (userError || !user) return null;
     
     return {
-      id: user._id,
-      email: user.email,
+      id: user.id,
+      email: session.user.email,
       full_name: user.full_name,
       is_admin: user.is_admin,
       phone: user.phone,

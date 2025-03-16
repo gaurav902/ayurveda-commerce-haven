@@ -1,7 +1,6 @@
 
 import { verifyToken } from '@/lib/auth/auth';
-import User from '@/lib/mongodb/models/user.model';
-import connectToDatabase from '@/lib/mongodb/connect';
+import { supabase } from '@/integrations/supabase/client';
 
 export async function authenticateUser(req, res, next) {
   try {
@@ -17,27 +16,24 @@ export async function authenticateUser(req, res, next) {
       return res.status(401).json({ error: 'Invalid token' });
     }
     
-    await connectToDatabase();
+    // Get user from Supabase
+    const { data: user, error } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', decoded.userId)
+      .single();
     
-    // Fix: Use model.findById() with proper callback/promise handling
-    try {
-      const user = await User.findById(decoded.userId);
-      
-      if (!user) {
-        return res.status(401).json({ error: 'User not found' });
-      }
-      
-      req.user = {
-        id: user._id,
-        email: user.email,
-        is_admin: user.is_admin,
-      };
-      
-      return next();
-    } catch (err) {
-      console.error('User lookup error:', err);
-      return res.status(500).json({ error: 'Database error' });
+    if (error || !user) {
+      return res.status(401).json({ error: 'User not found' });
     }
+    
+    req.user = {
+      id: user.id,
+      email: user.email,
+      is_admin: user.is_admin,
+    };
+    
+    return next();
   } catch (error) {
     return res.status(401).json({ error: 'Authentication failed' });
   }

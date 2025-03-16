@@ -1,26 +1,20 @@
 
-import Product from '@/lib/mongodb/models/product.model';
-import connectToDatabase from '@/lib/mongodb/connect';
+import { supabase } from '@/integrations/supabase/client';
 import { authenticateUser, requireAdmin } from '@/lib/api/middleware';
 
 export default async function handler(req, res) {
-  await connectToDatabase();
-  
   switch (req.method) {
     case 'GET':
       try {
-        const products = await Product.find().lean();
+        const { data: products, error } = await supabase
+          .from('products')
+          .select('*');
         
-        return res.status(200).json(products.map(product => ({
-          id: product._id,
-          name: product.name,
-          description: product.description,
-          price: product.price,
-          stock: product.stock,
-          image_url: product.image_url,
-          created_at: product.created_at,
-          updated_at: product.updated_at,
-        })));
+        if (error) {
+          return res.status(500).json({ error: 'Failed to fetch products' });
+        }
+        
+        return res.status(200).json(products);
       } catch (error) {
         return res.status(500).json({ error: 'Failed to fetch products' });
       }
@@ -30,26 +24,25 @@ export default async function handler(req, res) {
         await requireAdmin(req, res, async () => {
           const { name, description, price, stock, image_url } = req.body;
           
-          const product = new Product({
-            name,
-            description,
-            price,
-            stock,
-            image_url,
-          });
+          const { data: newProduct, error } = await supabase
+            .from('products')
+            .insert({
+              name,
+              description,
+              price,
+              stock,
+              image_url,
+              created_at: new Date(),
+              updated_at: new Date(),
+            })
+            .select()
+            .single();
           
-          await product.save();
+          if (error) {
+            return res.status(400).json({ error: 'Failed to create product' });
+          }
           
-          return res.status(201).json({
-            id: product._id,
-            name: product.name,
-            description: product.description,
-            price: product.price,
-            stock: product.stock,
-            image_url: product.image_url,
-            created_at: product.created_at,
-            updated_at: product.updated_at,
-          });
+          return res.status(201).json(newProduct);
         });
       } catch (error) {
         return res.status(500).json({ error: 'Failed to create product' });
