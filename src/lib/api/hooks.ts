@@ -1,4 +1,3 @@
-
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from './client';
 
@@ -137,7 +136,8 @@ export function useAddToCart() {
   const queryClient = useQueryClient();
   
   return useMutation({
-    mutationFn: ({ productId, quantity }) => api.addToCart(productId, quantity),
+    mutationFn: (params: { productId: string, quantity: number }) => 
+      api.addToCart(params.productId, params.quantity),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['cart'] });
     },
@@ -148,7 +148,8 @@ export function useUpdateCartItem() {
   const queryClient = useQueryClient();
   
   return useMutation({
-    mutationFn: ({ itemId, quantity }) => api.updateCartItem(itemId, quantity),
+    mutationFn: (params: { itemId: string, quantity: number }) => 
+      api.updateCartItem(params.itemId, params.quantity),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['cart'] });
     },

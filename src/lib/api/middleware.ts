@@ -19,7 +19,7 @@ export async function authenticateUser(req, res, next) {
     
     await connectToDatabase();
     
-    const user = await User.findById(decoded.userId);
+    const user = await User.findById(decoded.userId).exec();
     
     if (!user) {
       return res.status(401).json({ error: 'User not found' });

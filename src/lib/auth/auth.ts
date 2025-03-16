@@ -11,7 +11,7 @@ export async function signUp(email: string, password: string, userData: any = {}
     await connectToDatabase();
     
     // Check if user exists
-    const existingUser = await User.findOne({ email });
+    const existingUser = await User.findOne({ email }).exec();
     if (existingUser) {
       throw new Error('User already exists');
     }
@@ -35,6 +35,11 @@ export async function signUp(email: string, password: string, userData: any = {}
         email: user.email,
         full_name: user.full_name,
         is_admin: user.is_admin,
+        phone: user.phone,
+        address: user.address,
+        city: user.city,
+        state: user.state,
+        pincode: user.pincode,
       },
       token,
     };
@@ -48,7 +53,7 @@ export async function signIn(email: string, password: string) {
     await connectToDatabase();
     
     // Find user
-    const user = await User.findOne({ email }).select('+password');
+    const user = await User.findOne({ email }).select('+password').exec();
     if (!user) {
       throw new Error('Invalid email or password');
     }
@@ -68,6 +73,11 @@ export async function signIn(email: string, password: string) {
         email: user.email,
         full_name: user.full_name,
         is_admin: user.is_admin,
+        phone: user.phone,
+        address: user.address,
+        city: user.city,
+        state: user.state,
+        pincode: user.pincode,
       },
       token,
     };
@@ -87,7 +97,7 @@ export async function getCurrentUser(token: string) {
     if (!decoded) return null;
     
     // Find user
-    const user = await User.findById(decoded.userId);
+    const user = await User.findById(decoded.userId).exec();
     if (!user) return null;
     
     return {
@@ -95,7 +105,13 @@ export async function getCurrentUser(token: string) {
       email: user.email,
       full_name: user.full_name,
       is_admin: user.is_admin,
-      // Include other user fields as needed
+      phone: user.phone,
+      address: user.address,
+      city: user.city,
+      state: user.state,
+      pincode: user.pincode,
+      created_at: user.created_at,
+      updated_at: user.updated_at,
     };
   } catch (error) {
     return null;

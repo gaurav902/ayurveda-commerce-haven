@@ -1,14 +1,7 @@
-
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
 import { signIn, signUp, getCurrentUser } from "@/lib/auth/auth";
 import { toast } from "sonner";
-
-interface User {
-  id: string;
-  email: string;
-  full_name: string | null;
-  is_admin: boolean;
-}
+import { User } from "@/types";
 
 interface AuthContextType {
   user: User | null;

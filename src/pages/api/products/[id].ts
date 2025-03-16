@@ -1,113 +1,92 @@
 
-import connectToDatabase from '@/lib/mongodb/connect';
 import Product from '@/lib/mongodb/models/product.model';
-import ProductCategory from '@/lib/mongodb/models/product-category.model';
-import { verifyToken } from '@/lib/auth/auth';
+import connectToDatabase from '@/lib/mongodb/connect';
+import { authenticateUser, requireAdmin } from '@/lib/api/middleware';
 
 export default async function handler(req, res) {
   const { id } = req.query;
   
   await connectToDatabase();
-
+  
   switch (req.method) {
     case 'GET':
       try {
-        const product = await Product.findById(id);
+        const product = await Product.findById(id).lean().exec();
         
         if (!product) {
           return res.status(404).json({ error: 'Product not found' });
         }
         
-        res.status(200).json(product);
+        return res.status(200).json({
+          id: product._id,
+          name: product.name,
+          description: product.description,
+          price: product.price,
+          stock: product.stock,
+          image_url: product.image_url,
+          created_at: product.created_at,
+          updated_at: product.updated_at,
+        });
       } catch (error) {
-        res.status(500).json({ error: error.message });
+        return res.status(500).json({ error: 'Failed to fetch product' });
       }
-      break;
-
+    
     case 'PUT':
       try {
-        // Check if user is authenticated and is admin
-        const token = req.headers.authorization?.split(' ')[1];
-        if (!token) {
-          return res.status(401).json({ error: 'Unauthorized' });
-        }
-
-        const decoded = verifyToken(token);
-        if (!decoded) {
-          return res.status(401).json({ error: 'Invalid token' });
-        }
-
-        const { name, description, price, stock, image_url, category } = req.body;
-
-        // Update product
-        const updatedProduct = await Product.findByIdAndUpdate(
-          id,
-          {
-            name,
-            description,
-            price: price * 100, // Convert to cents
-            stock,
-            image_url,
-            updated_at: new Date()
-          },
-          { new: true }
-        );
-
-        if (!updatedProduct) {
-          return res.status(404).json({ error: 'Product not found' });
-        }
-
-        // Update product-category relationship if category is provided
-        if (category) {
-          // Remove existing relationship
-          await ProductCategory.deleteMany({ product_id: id });
+        await requireAdmin(req, res, async () => {
+          const { name, description, price, stock, image_url } = req.body;
           
-          // Create new relationship
-          const productCategory = new ProductCategory({
-            product_id: id,
-            category_id: category
+          const updatedProduct = await Product.findByIdAndUpdate(
+            id,
+            {
+              name,
+              description,
+              price,
+              stock,
+              image_url,
+              updated_at: new Date(),
+            },
+            { new: true }
+          ).exec();
+          
+          if (!updatedProduct) {
+            return res.status(404).json({ error: 'Product not found' });
+          }
+          
+          return res.status(200).json({
+            id: updatedProduct._id,
+            name: updatedProduct.name,
+            description: updatedProduct.description,
+            price: updatedProduct.price,
+            stock: updatedProduct.stock,
+            image_url: updatedProduct.image_url,
+            created_at: updatedProduct.created_at,
+            updated_at: updatedProduct.updated_at,
           });
-          
-          await productCategory.save();
-        }
-
-        res.status(200).json(updatedProduct);
+        });
       } catch (error) {
-        res.status(500).json({ error: error.message });
+        return res.status(500).json({ error: 'Failed to update product' });
       }
       break;
-
+    
     case 'DELETE':
       try {
-        // Check if user is authenticated and is admin
-        const token = req.headers.authorization?.split(' ')[1];
-        if (!token) {
-          return res.status(401).json({ error: 'Unauthorized' });
-        }
-
-        const decoded = verifyToken(token);
-        if (!decoded) {
-          return res.status(401).json({ error: 'Invalid token' });
-        }
-
-        // Delete product
-        const deletedProduct = await Product.findByIdAndDelete(id);
-        
-        if (!deletedProduct) {
-          return res.status(404).json({ error: 'Product not found' });
-        }
-        
-        // Delete product-category relationships
-        await ProductCategory.deleteMany({ product_id: id });
-        
-        res.status(200).json({ message: 'Product deleted successfully' });
+        await requireAdmin(req, res, async () => {
+          const deletedProduct = await Product.findByIdAndDelete(id).exec();
+          
+          if (!deletedProduct) {
+            return res.status(404).json({ error: 'Product not found' });
+          }
+          
+          return res.status(200).json({ message: 'Product deleted successfully' });
+        });
       } catch (error) {
-        res.status(500).json({ error: error.message });
+        return res.status(500).json({ error: 'Failed to delete product' });
       }
       break;
-
+    
     default:
       res.setHeader('Allow', ['GET', 'PUT', 'DELETE']);
-      res.status(405).end(`Method ${req.method} Not Allowed`);
+      return res.status(405).end(`Method ${req.method} Not Allowed`);
   }
 }

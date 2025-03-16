@@ -7,13 +7,22 @@ const apiBaseUrl = '/api';
 async function fetchAPI(endpoint, options = {}) {
   const url = `${apiBaseUrl}${endpoint}`;
   
-  const response = await fetch(url, {
-    ...options,
+  const defaultOptions = {
     headers: {
       'Content-Type': 'application/json',
-      ...options.headers,
+    }
+  };
+  
+  const mergedOptions = {
+    ...defaultOptions,
+    ...options,
+    headers: {
+      ...defaultOptions.headers,
+      ...(options.headers || {})
     },
-  });
+  };
+
+  const response = await fetch(url, mergedOptions);
 
   const data = await response.json();
   

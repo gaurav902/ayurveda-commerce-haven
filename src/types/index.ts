@@ -1,3 +1,4 @@
+
 export interface Product {
   id: string;
   name: string;
@@ -22,10 +23,24 @@ export interface ProductCategory {
   category_id: string;
 }
 
+export interface User {
+  id: string;
+  email: string;
+  full_name: string | null;
+  address: string | null;
+  city: string | null;
+  state: string | null;
+  pincode: string | null;
+  phone: string | null;
+  is_admin: boolean;
+  created_at?: string;
+  updated_at?: string;
+}
+
 export interface Profile {
   id: string;
   full_name: string | null;
-  email?: string | null; // Added email property
+  email?: string | null;
   address: string | null;
   city: string | null;
   state: string | null;
