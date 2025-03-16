@@ -1,5 +1,5 @@
 
-import { verifyToken } from '@/lib/auth/auth';
+import { verifyJWTToken } from '@/lib/auth/auth';
 import { supabase } from '@/integrations/supabase/client';
 
 export async function authenticateUser(req, res, next) {
@@ -10,7 +10,7 @@ export async function authenticateUser(req, res, next) {
       return res.status(401).json({ error: 'Unauthorized' });
     }
     
-    const decoded = verifyToken(token);
+    const decoded = verifyJWTToken(token);
     
     if (!decoded) {
       return res.status(401).json({ error: 'Invalid token' });
@@ -27,8 +27,8 @@ export async function authenticateUser(req, res, next) {
       return res.status(401).json({ error: 'User not found' });
     }
     
-    // Use auth.users to get email
-    const { data: authUser, error: authError } = await supabase.auth.admin.getUserById(decoded.userId);
+    // Use auth to get email
+    const { data: authUser, error: authError } = await supabase.auth.getUser(decoded.userId);
     
     if (authError || !authUser) {
       return res.status(401).json({ error: 'User not found in auth' });

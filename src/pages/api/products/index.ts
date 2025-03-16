@@ -1,6 +1,6 @@
 
 import { supabase } from '@/integrations/supabase/client';
-import { authenticateUser, requireAdmin } from '@/lib/api/middleware';
+import { requireAdmin } from '@/lib/api/middleware';
 
 export default async function handler(req, res) {
   switch (req.method) {
@@ -24,28 +24,28 @@ export default async function handler(req, res) {
         await requireAdmin(req, res, async () => {
           const { name, description, price, stock, image_url } = req.body;
           
-          // ISO string for timestamps
+          // ISO strings for timestamps
           const now = new Date().toISOString();
           
-          const { data: newProduct, error } = await supabase
+          const { data: product, error } = await supabase
             .from('products')
             .insert([{
               name,
               description,
               price,
-              stock,
-              image_url,
+              stock: stock || 0,
+              image_url: image_url || null,
               created_at: now,
-              updated_at: now,
+              updated_at: now
             }])
             .select()
             .single();
           
           if (error) {
-            return res.status(400).json({ error: 'Failed to create product' });
+            return res.status(500).json({ error: 'Failed to create product' });
           }
           
-          return res.status(201).json(newProduct);
+          return res.status(201).json(product);
         });
       } catch (error) {
         return res.status(500).json({ error: 'Failed to create product' });

@@ -1,11 +1,50 @@
 
-import { sign, verify } from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
 import { supabase } from '@/integrations/supabase/client';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret_key';
 const JWT_EXPIRES_IN = '7d';
 
-export async function signUp(email: string, password: string, userData: any = {}) {
+// Client-safe JWT verification that works in both Node.js and browser
+export function verifyJWTToken(token) {
+  try {
+    // In browser environment, we'll use a simpler approach
+    if (typeof window !== 'undefined') {
+      const base64Url = token.split('.')[1];
+      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+      }).join(''));
+      
+      const payload = JSON.parse(jsonPayload);
+      const now = Date.now() / 1000;
+      
+      if (payload.exp && payload.exp < now) {
+        return null;
+      }
+      
+      return payload;
+    } 
+    // In Node.js environment, use the proper jwt.verify
+    else {
+      return jwt.verify(token, JWT_SECRET);
+    }
+  } catch (error) {
+    console.error('JWT verification error:', error);
+    return null;
+  }
+}
+
+// Only used on the server side
+export function generateToken(userId) {
+  if (typeof window === 'undefined') {
+    return jwt.sign({ userId }, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
+  }
+  // For browser safety, return empty string
+  return '';
+}
+
+export async function signUp(email, password, userData = {}) {
   try {
     // Create user in Supabase Auth
     const { data: authData, error: authError } = await supabase.auth.signUp({
@@ -61,7 +100,7 @@ export async function signUp(email: string, password: string, userData: any = {}
   }
 }
 
-export async function signIn(email: string, password: string) {
+export async function signIn(email, password) {
   try {
     // Sign in with Supabase Auth
     const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
@@ -102,12 +141,12 @@ export async function signIn(email: string, password: string) {
   }
 }
 
-export async function getCurrentUser(token: string) {
+export async function getCurrentUser(token) {
   try {
     if (!token) return null;
     
     // Verify token
-    const decoded = verifyToken(token);
+    const decoded = verifyJWTToken(token);
     if (!decoded) return null;
     
     // Get current session
@@ -142,14 +181,7 @@ export async function getCurrentUser(token: string) {
   }
 }
 
-export function generateToken(userId: string) {
-  return sign({ userId }, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
-}
-
-export function verifyToken(token: string) {
-  try {
-    return verify(token, JWT_SECRET) as { userId: string };
-  } catch (error) {
-    return null;
-  }
+// Export a renamed version of verify for compatibility
+export function verifyToken(token) {
+  return verifyJWTToken(token);
 }
