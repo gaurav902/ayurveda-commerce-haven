@@ -35,8 +35,11 @@ async function fetchAPI(endpoint, options = {}) {
 
 // Auth token handling
 function getAuthHeader() {
-  const token = localStorage.getItem('auth_token');
-  return token ? { Authorization: `Bearer ${token}` } : {};
+  if (typeof window !== 'undefined') {
+    const token = localStorage.getItem('auth_token');
+    return token ? { Authorization: `Bearer ${token}` } : {};
+  }
+  return {};
 }
 
 export const api = {

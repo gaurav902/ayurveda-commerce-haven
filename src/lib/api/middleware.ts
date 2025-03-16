@@ -19,6 +19,7 @@ export async function authenticateUser(req, res, next) {
     
     await connectToDatabase();
     
+    // Fix: Use correct Mongoose query pattern
     const user = await User.findById(decoded.userId).exec();
     
     if (!user) {

@@ -9,9 +9,9 @@ export default async function handler(req, res) {
   switch (req.method) {
     case 'GET':
       try {
-        const products = await Product.find({}).lean().exec();
+        const products = await Product.find().lean().exec();
         
-        const formattedProducts = products.map(product => ({
+        return res.status(200).json(products.map(product => ({
           id: product._id,
           name: product.name,
           description: product.description,
@@ -20,9 +20,7 @@ export default async function handler(req, res) {
           image_url: product.image_url,
           created_at: product.created_at,
           updated_at: product.updated_at,
-        }));
-        
-        return res.status(200).json(formattedProducts);
+        })));
       } catch (error) {
         return res.status(500).json({ error: 'Failed to fetch products' });
       }
@@ -38,8 +36,6 @@ export default async function handler(req, res) {
             price,
             stock,
             image_url,
-            created_at: new Date(),
-            updated_at: new Date(),
           });
           
           await product.save();
