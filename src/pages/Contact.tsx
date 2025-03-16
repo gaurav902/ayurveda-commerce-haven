@@ -94,9 +94,9 @@ const Contact = () => {
                     <div>
                       <h3 className="font-medium">Address</h3>
                       <p className="text-sm text-muted-foreground">
-                        123 Ayurveda Lane<br />
-                        Wellness District<br />
-                        Mumbai, MH 400001
+                        C-409, Block C<br />
+                        Vaishali Nagar<br />
+                        Jaipur, RJ 302021
                       </p>
                     </div>
                   </div>
@@ -105,7 +105,7 @@ const Contact = () => {
                     <Phone className="h-5 w-5 mr-3 text-primary" />
                     <div>
                       <h3 className="font-medium">Phone</h3>
-                      <p className="text-sm text-muted-foreground">+91 (123) 456-7890</p>
+                      <p className="text-sm text-muted-foreground">+91 (911) 929-5094</p>
                     </div>
                   </div>
                   
@@ -113,7 +113,7 @@ const Contact = () => {
                     <Mail className="h-5 w-5 mr-3 text-primary" />
                     <div>
                       <h3 className="font-medium">Email</h3>
-                      <p className="text-sm text-muted-foreground">info@ayurvedahaven.com</p>
+                      <p className="text-sm text-muted-foreground">sales@tellmeindia.com</p>
                     </div>
                   </div>
                   

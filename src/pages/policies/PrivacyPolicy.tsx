@@ -1,4 +1,3 @@
-
 import Layout from "@/components/layout/Layout";
 import { Separator } from "@/components/ui/separator";
 
@@ -8,7 +7,7 @@ const PrivacyPolicy = () => {
       <div className="container py-12">
         <div className="max-w-4xl mx-auto">
           <h1 className="text-3xl font-serif mb-4">Privacy Policy</h1>
-          <p className="text-muted-foreground mb-8">Last updated: June 15, 2023</p>
+          <p className="text-muted-foreground mb-8">Last updated: Jan 06, 2025</p>
           
           <Separator className="mb-8" />
           
@@ -16,7 +15,7 @@ const PrivacyPolicy = () => {
             <section>
               <h2 className="text-xl font-medium mb-3">Introduction</h2>
               <p className="mb-3">
-                At Ayurveda Haven, we respect your privacy and are committed to protecting your personal data. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website and use our services.
+                At Tell Me India, we respect your privacy and are committed to protecting your personal data. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website and use our services.
               </p>
               <p>
                 Please read this Privacy Policy carefully. If you do not agree with the terms of this Privacy Policy, please do not access the site.
@@ -86,7 +85,7 @@ const PrivacyPolicy = () => {
             <section>
               <h2 className="text-xl font-medium mb-3">Contact Us</h2>
               <p>
-                If you have any questions or suggestions about our Privacy Policy, do not hesitate to contact us at privacy@ayurvedahaven.com.
+                If you have any questions or suggestions about our Privacy Policy, do not hesitate to contact us at contact@tellmeindia.com.
               </p>
             </section>
           </div>
