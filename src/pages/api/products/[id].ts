@@ -11,7 +11,7 @@ export default async function handler(req, res) {
   switch (req.method) {
     case 'GET':
       try {
-        const product = await Product.findById(id).lean().exec();
+        const product = await Product.findById(id).lean();
         
         if (!product) {
           return res.status(404).json({ error: 'Product not found' });
@@ -47,7 +47,7 @@ export default async function handler(req, res) {
               updated_at: new Date(),
             },
             { new: true }
-          ).exec();
+          );
           
           if (!updatedProduct) {
             return res.status(404).json({ error: 'Product not found' });
@@ -72,7 +72,7 @@ export default async function handler(req, res) {
     case 'DELETE':
       try {
         await requireAdmin(req, res, async () => {
-          const deletedProduct = await Product.findByIdAndDelete(id).exec();
+          const deletedProduct = await Product.findByIdAndDelete(id);
           
           if (!deletedProduct) {
             return res.status(404).json({ error: 'Product not found' });

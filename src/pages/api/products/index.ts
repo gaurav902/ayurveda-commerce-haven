@@ -1,7 +1,7 @@
 
 import Product from '@/lib/mongodb/models/product.model';
 import connectToDatabase from '@/lib/mongodb/connect';
-import { requireAdmin } from '@/lib/api/middleware';
+import { authenticateUser, requireAdmin } from '@/lib/api/middleware';
 
 export default async function handler(req, res) {
   await connectToDatabase();
@@ -9,7 +9,7 @@ export default async function handler(req, res) {
   switch (req.method) {
     case 'GET':
       try {
-        const products = await Product.find().lean().exec();
+        const products = await Product.find().lean();
         
         return res.status(200).json(products.map(product => ({
           id: product._id,

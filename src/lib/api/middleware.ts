@@ -19,20 +19,25 @@ export async function authenticateUser(req, res, next) {
     
     await connectToDatabase();
     
-    // Fix: Use correct Mongoose query pattern
-    const user = await User.findById(decoded.userId).exec();
-    
-    if (!user) {
-      return res.status(401).json({ error: 'User not found' });
+    // Fix: Use model.findById() with proper callback/promise handling
+    try {
+      const user = await User.findById(decoded.userId);
+      
+      if (!user) {
+        return res.status(401).json({ error: 'User not found' });
+      }
+      
+      req.user = {
+        id: user._id,
+        email: user.email,
+        is_admin: user.is_admin,
+      };
+      
+      return next();
+    } catch (err) {
+      console.error('User lookup error:', err);
+      return res.status(500).json({ error: 'Database error' });
     }
-    
-    req.user = {
-      id: user._id,
-      email: user.email,
-      is_admin: user.is_admin,
-    };
-    
-    return next();
   } catch (error) {
     return res.status(401).json({ error: 'Authentication failed' });
   }

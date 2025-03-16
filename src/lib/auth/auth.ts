@@ -11,7 +11,7 @@ export async function signUp(email: string, password: string, userData: any = {}
     await connectToDatabase();
     
     // Check if user exists
-    const existingUser = await User.findOne({ email }).exec();
+    const existingUser = await User.findOne({ email });
     if (existingUser) {
       throw new Error('User already exists');
     }
@@ -53,7 +53,7 @@ export async function signIn(email: string, password: string) {
     await connectToDatabase();
     
     // Find user
-    const user = await User.findOne({ email }).select('+password').exec();
+    const user = await User.findOne({ email }).select('+password');
     if (!user) {
       throw new Error('Invalid email or password');
     }
@@ -97,7 +97,7 @@ export async function getCurrentUser(token: string) {
     if (!decoded) return null;
     
     // Find user
-    const user = await User.findById(decoded.userId).exec();
+    const user = await User.findById(decoded.userId);
     if (!user) return null;
     
     return {
