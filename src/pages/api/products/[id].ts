@@ -28,6 +28,9 @@ export default async function handler(req, res) {
         await requireAdmin(req, res, async () => {
           const { name, description, price, stock, image_url } = req.body;
           
+          // ISO string for updated_at
+          const now = new Date().toISOString();
+          
           const { data: updatedProduct, error } = await supabase
             .from('products')
             .update({
@@ -36,7 +39,7 @@ export default async function handler(req, res) {
               price,
               stock,
               image_url,
-              updated_at: new Date(),
+              updated_at: now,
             })
             .eq('id', id)
             .select()

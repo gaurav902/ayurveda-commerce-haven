@@ -24,17 +24,20 @@ export default async function handler(req, res) {
         await requireAdmin(req, res, async () => {
           const { name, description, price, stock, image_url } = req.body;
           
+          // ISO string for timestamps
+          const now = new Date().toISOString();
+          
           const { data: newProduct, error } = await supabase
             .from('products')
-            .insert({
+            .insert([{
               name,
               description,
               price,
               stock,
               image_url,
-              created_at: new Date(),
-              updated_at: new Date(),
-            })
+              created_at: now,
+              updated_at: now,
+            }])
             .select()
             .single();
           

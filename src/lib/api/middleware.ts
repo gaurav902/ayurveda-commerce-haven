@@ -27,9 +27,16 @@ export async function authenticateUser(req, res, next) {
       return res.status(401).json({ error: 'User not found' });
     }
     
+    // Use auth.users to get email
+    const { data: authUser, error: authError } = await supabase.auth.admin.getUserById(decoded.userId);
+    
+    if (authError || !authUser) {
+      return res.status(401).json({ error: 'User not found in auth' });
+    }
+    
     req.user = {
       id: user.id,
-      email: user.email,
+      email: authUser.user.email,
       is_admin: user.is_admin,
     };
     
