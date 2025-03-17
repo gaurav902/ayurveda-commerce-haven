@@ -18,7 +18,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
     if (!isLoading) {
       if (!user) {
         toast.error("Please log in to access admin features");
-        navigate("/login");
+        navigate("/admin/login");
       } else if (!isAdmin) {
         toast.error("You don't have admin privileges");
         navigate("/");

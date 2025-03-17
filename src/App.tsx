@@ -8,6 +8,7 @@ import { AuthProvider } from "./context/AuthContext";
 import { CartProvider } from "./context/CartContext";
 import Index from "./pages/Index";
 import Login from "./pages/auth/Login";
+import AdminLogin from "./pages/auth/AdminLogin";
 import Register from "./pages/auth/Register";
 import UserDashboard from "./pages/dashboard/UserDashboard";
 import AdminDashboard from "./pages/admin/AdminDashboard";
@@ -68,6 +69,7 @@ const App = () => (
               {/* Public Routes */}
               <Route path="/" element={<Index />} />
               <Route path="/login" element={<Login />} />
+              <Route path="/admin/login" element={<AdminLogin />} />
               <Route path="/register" element={<Register />} />
               <Route path="/shop" element={<ProductsPage />} />
               <Route path="/category/:slug" element={<CategoryPage />} />

@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { 
   Card, 
   CardContent, 
@@ -17,17 +17,13 @@ import Layout from "@/components/layout/Layout";
 import { Eye, EyeOff } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 
-const Login = () => {
+const AdminLogin = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-  const location = useLocation();
   const { signIn, isAdmin } = useAuth();
-
-  // Get the redirect path from location state, or default to dashboard
-  const from = (location.state as any)?.from?.pathname || "/";
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -44,12 +40,11 @@ const Login = () => {
     if (!error) {
       // Wait a moment for auth state to update
       setTimeout(() => {
-        // Redirect based on role
         if (isAdmin) {
           navigate("/admin/dashboard");
         } else {
-          // Redirect to the page they were trying to access or home
-          navigate(from);
+          toast.error("You don't have admin privileges");
+          navigate("/admin/login");
         }
       }, 500);
     }
@@ -66,9 +61,9 @@ const Login = () => {
       <div className="container max-w-md py-12">
         <Card className="shadow-lg">
           <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl text-center font-serif">Login</CardTitle>
+            <CardTitle className="text-2xl text-center font-serif">Admin Login</CardTitle>
             <CardDescription className="text-center">
-              Enter your credentials to access your account
+              Enter your admin credentials to access the dashboard
             </CardDescription>
           </CardHeader>
           
@@ -79,19 +74,14 @@ const Login = () => {
                 <Input
                   id="email"
                   type="email"
-                  placeholder="name@example.com"
+                  placeholder="admin@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
                 />
               </div>
               <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <Label htmlFor="password">Password</Label>
-                  <Link to="/forgot-password" className="text-sm text-primary hover:underline">
-                    Forgot password?
-                  </Link>
-                </div>
+                <Label htmlFor="password">Password</Label>
                 <div className="relative">
                   <Input
                     id="password"
@@ -119,17 +109,6 @@ const Login = () => {
               >
                 {isLoading ? "Logging in..." : "Login"}
               </Button>
-              <p className="mt-4 text-center text-sm text-muted-foreground">
-                Don't have an account?{" "}
-                <Link to="/register" className="text-primary hover:underline">
-                  Register
-                </Link>
-              </p>
-              <p className="mt-2 text-center text-sm text-muted-foreground">
-                <Link to="/admin/login" className="text-primary hover:underline">
-                  Admin Login
-                </Link>
-              </p>
             </CardFooter>
           </form>
         </Card>
@@ -138,4 +117,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default AdminLogin;

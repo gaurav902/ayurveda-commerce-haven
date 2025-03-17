@@ -15,7 +15,7 @@ const AdminRoute = ({ children }: AdminRouteProps) => {
   useEffect(() => {
     if (!isLoading && !user) {
       toast.error("Please log in to access admin features");
-      navigate('/login');
+      navigate('/admin/login');
     } else if (!isLoading && user && !isAdmin) {
       toast.error("You don't have admin privileges");
       navigate('/');
@@ -31,7 +31,7 @@ const AdminRoute = ({ children }: AdminRouteProps) => {
   }
 
   if (!user) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/admin/login" replace />;
   }
 
   if (!isAdmin) {
