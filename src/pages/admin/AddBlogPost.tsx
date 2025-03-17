@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { ArrowLeft, Loader2 } from "lucide-react";
+import { BlogPost } from "@/types";
 
 const AddBlogPost = () => {
   const [title, setTitle] = useState("");
@@ -28,6 +29,7 @@ const AddBlogPost = () => {
     setIsSubmitting(true);
     
     try {
+      // Use type assertion to tell TypeScript this operation is intentional
       const { data, error } = await supabase
         .from("blog_posts")
         .insert([
@@ -37,7 +39,7 @@ const AddBlogPost = () => {
             image_url: imageUrl || null 
           }
         ])
-        .select();
+        .select() as unknown as { data: BlogPost[] | null, error: Error | null };
       
       if (error) throw error;
       

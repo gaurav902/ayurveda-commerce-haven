@@ -21,7 +21,7 @@ const BlogPostDetail = () => {
         .from("blog_posts")
         .select("*")
         .eq("id", id)
-        .single();
+        .single() as unknown as { data: BlogPost | null, error: Error | null };
 
       if (error) throw error;
       return data as BlogPost;

@@ -31,7 +31,7 @@ const Blogs = () => {
       const { data, error } = await supabase
         .from("blog_posts")
         .select("*")
-        .order("created_at", { ascending: false });
+        .order("created_at", { ascending: false }) as unknown as { data: BlogPost[] | null, error: Error | null };
       
       if (error) throw error;
       return data as BlogPost[];
@@ -45,7 +45,7 @@ const Blogs = () => {
       const { error } = await supabase
         .from("blog_posts")
         .delete()
-        .eq("id", id);
+        .eq("id", id) as unknown as { error: Error | null };
       
       if (error) throw error;
       
