@@ -54,7 +54,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             } as Profile;
             
             setProfile(profileWithEmail);
-            setIsAdmin(profileData?.is_admin || false);
+            
+            // Check if user is an admin using the admin_users table
+            const { data: adminData, error: adminError } = await supabase
+              .from('admin_users')
+              .select('*')
+              .eq('id', data.session.user.id)
+              .single();
+              
+            if (!adminError && adminData) {
+              setIsAdmin(true);
+            } else {
+              // Fallback to checking is_admin in profiles table
+              setIsAdmin(profileData?.is_admin || false);
+            }
           }
         } else {
           setProfile(null);
@@ -96,7 +109,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             } as Profile;
             
             setProfile(profileWithEmail);
-            setIsAdmin(profileData?.is_admin || false);
+            
+            // Check if user is an admin using the admin_users table
+            const { data: adminData, error: adminError } = await supabase
+              .from('admin_users')
+              .select('*')
+              .eq('id', session.user.id)
+              .single();
+              
+            if (!adminError && adminData) {
+              setIsAdmin(true);
+            } else {
+              // Fallback to checking is_admin in profiles table
+              setIsAdmin(profileData?.is_admin || false);
+            }
           }
         } catch (error) {
           console.error("Error in onAuthStateChange:", error);
@@ -131,24 +157,36 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       
       toast.success("Logged in successfully!");
       
-      // If logging in as admin, ensure the user has admin rights
+      // If logging in as admin@tellmeindia.com, ensure the user is in admin_users table
       if (email === "admin@tellmeindia.com") {
-        // Query to check if user exists in profiles table with admin rights
-        const { data: adminProfile, error: profileError } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', (await supabase.auth.getUser()).data.user?.id)
-          .single();
-          
-        if (profileError || !adminProfile?.is_admin) {
-          // Update profile to set admin flag if needed
-          const { error: updateError } = await supabase
-            .from('profiles')
-            .update({ is_admin: true })
-            .eq('id', (await supabase.auth.getUser()).data.user?.id);
+        const { data: userData } = await supabase.auth.getUser();
+        if (userData?.user) {
+          // Check if user exists in admin_users table
+          const { data: adminData, error: adminCheckError } = await supabase
+            .from('admin_users')
+            .select('*')
+            .eq('id', userData.user.id)
+            .single();
             
-          if (updateError) {
-            console.error("Error updating admin status:", updateError);
+          if (adminCheckError) {
+            // Insert into admin_users if not already there
+            const { error: insertError } = await supabase
+              .from('admin_users')
+              .insert([{ id: userData.user.id, email: email }]);
+              
+            if (insertError) {
+              console.error("Error adding admin user:", insertError);
+            }
+            
+            // Update profiles to set is_admin flag
+            const { error: updateError } = await supabase
+              .from('profiles')
+              .update({ is_admin: true })
+              .eq('id', userData.user.id);
+              
+            if (updateError) {
+              console.error("Error updating admin status:", updateError);
+            }
           }
         }
       }

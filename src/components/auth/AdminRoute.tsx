@@ -1,14 +1,26 @@
 
-import { ReactNode } from 'react';
-import { Navigate } from 'react-router-dom';
+import { ReactNode, useEffect } from 'react';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
+import { toast } from 'sonner';
 
 interface AdminRouteProps {
   children: ReactNode;
 }
 
 const AdminRoute = ({ children }: AdminRouteProps) => {
-  const { isAdmin, isLoading } = useAuth();
+  const { isAdmin, isLoading, user } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!isLoading && !user) {
+      toast.error("Please log in to access admin features");
+      navigate('/login');
+    } else if (!isLoading && user && !isAdmin) {
+      toast.error("You don't have admin privileges");
+      navigate('/');
+    }
+  }, [isLoading, user, isAdmin, navigate]);
 
   if (isLoading) {
     return (
@@ -18,9 +30,12 @@ const AdminRoute = ({ children }: AdminRouteProps) => {
     );
   }
 
-  if (!isAdmin) {
-    // Redirect to login page if not an admin
+  if (!user) {
     return <Navigate to="/login" replace />;
+  }
+
+  if (!isAdmin) {
+    return <Navigate to="/" replace />;
   }
 
   return <>{children}</>;

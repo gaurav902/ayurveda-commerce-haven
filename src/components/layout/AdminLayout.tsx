@@ -1,16 +1,30 @@
 
-import { ReactNode } from "react";
+import { ReactNode, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import AdminSidebar from "../admin/AdminSidebar";
 import { useAuth } from "@/context/AuthContext";
+import { toast } from "sonner";
 
 interface AdminLayoutProps {
   children: ReactNode;
 }
 
 const AdminLayout = ({ children }: AdminLayoutProps) => {
-  const { isAdmin, isLoading } = useAuth();
+  const { isAdmin, isLoading, user } = useAuth();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    // Only navigate if not loading and we have determined the admin status
+    if (!isLoading) {
+      if (!user) {
+        toast.error("Please log in to access admin features");
+        navigate("/login");
+      } else if (!isAdmin) {
+        toast.error("You don't have admin privileges");
+        navigate("/");
+      }
+    }
+  }, [isLoading, isAdmin, user, navigate]);
 
   // Redirect non-admin users or handle loading state
   if (isLoading) {
@@ -21,9 +35,8 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
     );
   }
 
-  if (!isAdmin) {
-    navigate("/login");
-    return null;
+  if (!user || !isAdmin) {
+    return null; // Will be redirected by the useEffect
   }
 
   return (
