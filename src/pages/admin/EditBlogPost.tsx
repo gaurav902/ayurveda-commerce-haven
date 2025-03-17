@@ -29,7 +29,7 @@ const EditBlogPost = () => {
         .from("blog_posts")
         .select("*")
         .eq("id", id)
-        .single() as unknown as { data: BlogPost | null, error: Error | null };
+        .single();
 
       if (error) throw error;
       return data as BlogPost;
@@ -63,7 +63,7 @@ const EditBlogPost = () => {
           content, 
           image_url: imageUrl || null 
         })
-        .eq("id", id) as unknown as { error: Error | null };
+        .eq("id", id);
       
       if (error) throw error;
       

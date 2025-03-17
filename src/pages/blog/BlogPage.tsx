@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import Layout from "@/components/layout/Layout";
@@ -18,7 +18,7 @@ const BlogPage = () => {
       const { data, error } = await supabase
         .from("blog_posts")
         .select("*")
-        .order("created_at", { ascending: false }) as unknown as { data: BlogPost[] | null, error: Error | null };
+        .order("created_at", { ascending: false });
 
       if (error) throw error;
       return data as BlogPost[];

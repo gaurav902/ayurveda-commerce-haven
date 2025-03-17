@@ -29,7 +29,6 @@ const AddBlogPost = () => {
     setIsSubmitting(true);
     
     try {
-      // Use type assertion to tell TypeScript this operation is intentional
       const { data, error } = await supabase
         .from("blog_posts")
         .insert([
@@ -39,7 +38,7 @@ const AddBlogPost = () => {
             image_url: imageUrl || null 
           }
         ])
-        .select() as unknown as { data: BlogPost[] | null, error: Error | null };
+        .select();
       
       if (error) throw error;
       
