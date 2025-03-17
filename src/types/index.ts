@@ -13,7 +13,7 @@ export interface Product {
   name: string;
   description: string;
   price: number;
-  stock_quantity: number;
+  stock: number; // This is what's in the database
   image_url: string | null;
   created_at: string;
   updated_at: string;
@@ -24,6 +24,7 @@ export interface Product {
   benefits?: string;
   ingredients?: string;
   usage_directions?: string;
+  stock_quantity?: number; // Added for compatibility with existing code
 }
 
 export interface Category {
@@ -31,39 +32,39 @@ export interface Category {
   name: string;
   description: string | null;
   image_url: string | null;
-  slug: string;
+  slug?: string; // Made optional to match database
   created_at: string;
-  updated_at: string;
+  updated_at?: string; // Made optional to match database
 }
 
 export interface Profile {
   id: string;
-  full_name: string;
-  email: string;
-  phone: string;
-  address: string;
-  city: string;
-  state: string;
-  pincode: string;
-  is_admin: boolean;
-  created_at: string;
-  updated_at: string;
+  full_name: string | null;
+  email?: string; // Added for compatibility with existing code
+  phone: string | null;
+  address: string | null;
+  city: string | null;
+  state: string | null;
+  pincode: string | null;
+  is_admin: boolean | null;
+  created_at: string | null;
+  updated_at: string | null;
 }
 
 export interface Cart {
   id: string;
-  user_id: string;
-  created_at: string;
-  updated_at: string;
+  user_id: string | null;
+  created_at: string | null;
+  updated_at: string | null;
 }
 
 export interface CartItem {
   id: string;
-  cart_id: string;
-  product_id: string;
+  cart_id: string | null;
+  product_id: string | null;
   quantity: number;
-  created_at: string;
-  updated_at: string;
+  created_at: string | null;
+  updated_at: string | null;
 }
 
 export interface CartWithItems extends Cart {
@@ -72,7 +73,7 @@ export interface CartWithItems extends Cart {
 
 export interface Order {
   id: string;
-  user_id: string;
+  user_id: string | null;
   total_amount: number;
   status: string;
   payment_status: string;
@@ -85,29 +86,31 @@ export interface Order {
   order_notes: string | null;
   discount_amount: number;
   coupon_id: string | null;
-  created_at: string;
-  updated_at: string;
+  created_at: string | null;
+  updated_at: string | null;
 }
 
 export interface OrderItem {
   id: string;
-  order_id: string;
-  product_id: string;
+  order_id: string | null;
+  product_id: string | null;
   product_name: string;
   quantity: number;
   price: number;
-  created_at: string;
+  created_at: string | null;
 }
 
 export interface Coupon {
   id: string;
   code: string;
   discount_percentage: number;
-  valid_from: string;
-  valid_to: string;
-  is_active: boolean;
-  created_at: string;
-  updated_at: string;
+  valid_from?: string; // Made optional to match database
+  valid_to?: string; // Made optional to match database
+  is_active?: boolean; // Made optional to match database
+  active?: boolean; // Added for compatibility with database
+  expires_at?: string; // Added for compatibility with database
+  created_at: string | null;
+  updated_at?: string | null; // Made optional to match database
 }
 
 export interface ContactSubmission {
@@ -117,14 +120,14 @@ export interface ContactSubmission {
   subject: string;
   message: string;
   status: string;
-  created_at: string;
-  updated_at: string;
+  created_at: string | null;
+  updated_at: string | null;
 }
 
 export interface Subscriber {
   id: string;
   email: string;
-  receive_notifications: boolean;
-  created_at: string;
-  updated_at: string;
+  receive_notifications: boolean | null;
+  created_at: string | null;
+  updated_at?: string | null; // Made optional to match database
 }

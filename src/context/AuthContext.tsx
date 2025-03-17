@@ -47,7 +47,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             setProfile(null);
             setIsAdmin(false);
           } else {
-            setProfile(profileData);
+            // Add the email from auth.user to the profile
+            const profileWithEmail = {
+              ...profileData,
+              email: data.session.user.email
+            } as Profile;
+            
+            setProfile(profileWithEmail);
             setIsAdmin(profileData?.is_admin || false);
           }
         } else {
@@ -83,7 +89,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             setProfile(null);
             setIsAdmin(false);
           } else {
-            setProfile(profileData);
+            // Add the email from auth.user to the profile
+            const profileWithEmail = {
+              ...profileData,
+              email: session.user.email
+            } as Profile;
+            
+            setProfile(profileWithEmail);
             setIsAdmin(profileData?.is_admin || false);
           }
         } catch (error) {
@@ -118,6 +130,29 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
       
       toast.success("Logged in successfully!");
+      
+      // If logging in as admin, ensure the user has admin rights
+      if (email === "admin@tellmeindia.com") {
+        // Query to check if user exists in profiles table with admin rights
+        const { data: adminProfile, error: profileError } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', (await supabase.auth.getUser()).data.user?.id)
+          .single();
+          
+        if (profileError || !adminProfile?.is_admin) {
+          // Update profile to set admin flag if needed
+          const { error: updateError } = await supabase
+            .from('profiles')
+            .update({ is_admin: true })
+            .eq('id', (await supabase.auth.getUser()).data.user?.id);
+            
+          if (updateError) {
+            console.error("Error updating admin status:", updateError);
+          }
+        }
+      }
+      
       return { error: null };
     } catch (error: any) {
       toast.error(error.message || "Login failed");
@@ -183,7 +218,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         return { error };
       }
 
-      setProfile(data);
+      // Add email to the returned profile data
+      const updatedProfile = {
+        ...data,
+        email: user.email
+      } as Profile;
+      
+      setProfile(updatedProfile);
       toast.success("Profile updated successfully!");
       return { error: null };
     } catch (error: any) {
