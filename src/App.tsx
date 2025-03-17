@@ -41,8 +41,20 @@ import ShippingPolicy from "./pages/policies/ShippingPolicy";
 import ReturnPolicy from "./pages/policies/ReturnPolicy";
 import AdminSubscribers from "./pages/admin/Subscribers";
 import AdminContactSubmissions from "./pages/admin/ContactSubmissions";
+import BlogPage from "./pages/blog/BlogPage";
+import BlogPostDetail from "./pages/blog/BlogPostDetail";
+import Blogs from "./pages/admin/Blogs";
+import AddBlogPost from "./pages/admin/AddBlogPost";
+import EditBlogPost from "./pages/admin/EditBlogPost";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 1,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -64,6 +76,10 @@ const App = () => (
               <Route path="/about" element={<About />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/wishlist" element={<PrivateRoute><Wishlist /></PrivateRoute>} />
+              
+              {/* Blog Routes */}
+              <Route path="/blog" element={<BlogPage />} />
+              <Route path="/blog/:id" element={<BlogPostDetail />} />
               
               {/* Policy Pages */}
               <Route path="/policies/privacy" element={<PrivacyPolicy />} />
@@ -93,6 +109,11 @@ const App = () => (
               <Route path="/admin/orders/:id" element={<AdminRoute><AdminOrderDetail /></AdminRoute>} />
               <Route path="/admin/subscribers" element={<AdminRoute><AdminSubscribers /></AdminRoute>} />
               <Route path="/admin/contact-submissions" element={<AdminRoute><AdminContactSubmissions /></AdminRoute>} />
+              
+              {/* Admin Blog Routes */}
+              <Route path="/admin/blogs" element={<AdminRoute><Blogs /></AdminRoute>} />
+              <Route path="/admin/blogs/add" element={<AdminRoute><AddBlogPost /></AdminRoute>} />
+              <Route path="/admin/blogs/edit/:id" element={<AdminRoute><EditBlogPost /></AdminRoute>} />
 
               {/* Catch-all */}
               <Route path="*" element={<NotFound />} />

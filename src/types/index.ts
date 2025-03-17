@@ -1,3 +1,4 @@
+
 export interface Product {
   id: string;
   name: string;
@@ -144,4 +145,13 @@ export interface Subscriber {
   email: string;
   receive_notifications: boolean;
   created_at: string;
+}
+
+export interface BlogPost {
+  id: string;
+  title: string;
+  content: string;
+  image_url: string | null;
+  created_at: string;
+  updated_at: string;
 }

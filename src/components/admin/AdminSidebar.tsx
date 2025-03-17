@@ -8,29 +8,34 @@ import {
   Settings, 
   BarChart, 
   Tag, 
-  LogOut 
+  LogOut,
+  FileText 
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/context/AuthContext";
 
 const AdminSidebar = () => {
   const location = useLocation();
+  const { signOut } = useAuth();
+  
   const menuItems = [
     { name: "Dashboard", icon: <LayoutDashboard size={18} />, path: "/admin/dashboard" },
     { name: "Products", icon: <Package size={18} />, path: "/admin/products" },
     { name: "Categories", icon: <Tag size={18} />, path: "/admin/categories" },
     { name: "Orders", icon: <ShoppingCart size={18} />, path: "/admin/orders" },
+    { name: "Blog", icon: <FileText size={18} />, path: "/admin/blogs" },
     { name: "Customers", icon: <Users size={18} />, path: "/admin/customers" },
     { name: "Analytics", icon: <BarChart size={18} />, path: "/admin/analytics" },
     { name: "Settings", icon: <Settings size={18} />, path: "/admin/settings" },
   ];
 
   const isActive = (path: string) => {
-    return location.pathname === path;
+    return location.pathname === path || 
+           (path !== "/admin/dashboard" && location.pathname.startsWith(path));
   };
 
-  const handleLogout = () => {
-    // Clear authentication and redirect
-    localStorage.removeItem("userRole");
+  const handleLogout = async () => {
+    await signOut();
     window.location.href = "/";
   };
 

@@ -17,7 +17,7 @@ const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const { cartCount } = useCart();
-  const { user } = useAuth();
+  const { user, isAdmin } = useAuth();
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
   const toggleSearch = () => setIsSearchOpen(!isSearchOpen);
@@ -38,6 +38,9 @@ const Navbar = () => {
             </Link>
             <Link to="/shop" className="text-foreground hover:text-primary transition-colors">
               Shop
+            </Link>
+            <Link to="/blog" className="text-foreground hover:text-primary transition-colors">
+              Blog
             </Link>
             <Link to="/about" className="text-foreground hover:text-primary transition-colors">
               About
@@ -72,9 +75,15 @@ const Navbar = () => {
               <DropdownMenuContent align="end" className="w-48">
                 {user ? (
                   <>
-                    <DropdownMenuItem asChild>
-                      <Link to="/dashboard" className="w-full cursor-pointer">Dashboard</Link>
-                    </DropdownMenuItem>
+                    {isAdmin ? (
+                      <DropdownMenuItem asChild>
+                        <Link to="/admin/dashboard" className="w-full cursor-pointer">Admin Dashboard</Link>
+                      </DropdownMenuItem>
+                    ) : (
+                      <DropdownMenuItem asChild>
+                        <Link to="/dashboard" className="w-full cursor-pointer">Dashboard</Link>
+                      </DropdownMenuItem>
+                    )}
                     <DropdownMenuItem asChild>
                       <Link to="/dashboard/orders" className="w-full cursor-pointer">My Orders</Link>
                     </DropdownMenuItem>
@@ -123,6 +132,9 @@ const Navbar = () => {
               <Link to="/shop" className="text-foreground hover:text-primary transition-colors">
                 Shop
               </Link>
+              <Link to="/blog" className="text-foreground hover:text-primary transition-colors">
+                Blog
+              </Link>
               <Link to="/about" className="text-foreground hover:text-primary transition-colors">
                 About
               </Link>
@@ -132,9 +144,15 @@ const Navbar = () => {
               <div className="pt-2 border-t border-border">
                 {user ? (
                   <>
-                    <Link to="/dashboard" className="block py-2 text-foreground hover:text-primary transition-colors">
-                      Dashboard
-                    </Link>
+                    {isAdmin ? (
+                      <Link to="/admin/dashboard" className="block py-2 text-foreground hover:text-primary transition-colors">
+                        Admin Dashboard
+                      </Link>
+                    ) : (
+                      <Link to="/dashboard" className="block py-2 text-foreground hover:text-primary transition-colors">
+                        Dashboard
+                      </Link>
+                    )}
                     <Link to="/dashboard/orders" className="block py-2 text-foreground hover:text-primary transition-colors">
                       My Orders
                     </Link>
