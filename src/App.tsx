@@ -48,6 +48,13 @@ import Blogs from "./pages/admin/Blogs";
 import AddBlogPost from "./pages/admin/AddBlogPost";
 import EditBlogPost from "./pages/admin/EditBlogPost";
 
+// Skin & Hair Checkup Routes
+import ApplyForCheckup from "./pages/checkup/ApplyForCheckup";
+import DoctorLogin from "./pages/doctor/Login";
+import DoctorRegister from "./pages/doctor/Register";
+import DoctorDashboard from "./pages/doctor/Dashboard";
+import RecommendKit from "./pages/doctor/RecommendKit";
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -78,6 +85,15 @@ const App = () => (
               <Route path="/about" element={<About />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/wishlist" element={<PrivateRoute><Wishlist /></PrivateRoute>} />
+              
+              {/* Skin & Hair Checkup Routes */}
+              <Route path="/checkup/apply" element={<PrivateRoute><ApplyForCheckup /></PrivateRoute>} />
+              
+              {/* Doctor Routes */}
+              <Route path="/doctor/login" element={<DoctorLogin />} />
+              <Route path="/doctor/register" element={<DoctorRegister />} />
+              <Route path="/doctor/dashboard" element={<DoctorDashboard />} />
+              <Route path="/doctor/recommend-kit/:id" element={<RecommendKit />} />
               
               {/* Blog Routes */}
               <Route path="/blog" element={<BlogPage />} />

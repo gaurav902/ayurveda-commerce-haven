@@ -131,3 +131,60 @@ export interface Subscriber {
   created_at: string | null;
   updated_at?: string | null; // Made optional to match database
 }
+
+// New interfaces for skin and hair checkup system
+
+export interface CheckupApplication {
+  id: string;
+  user_id: string;
+  full_name: string;
+  email: string;
+  phone: string;
+  age: number;
+  gender: string;
+  blood_group: string;
+  allergies: string;
+  birthmarks: string;
+  medical_conditions: string;
+  previous_treatments: string;
+  current_medications: string;
+  skin_problem: string;
+  hair_problem: string;
+  want_consultation: boolean;
+  report_url: string;
+  selfie_urls: string[];
+  status: 'pending' | 'in-progress' | 'completed';
+  created_at: string;
+  updated_at: string;
+}
+
+export interface KitProduct {
+  name: string;
+  description: string;
+  usage: string;
+}
+
+export interface KitRecommendation {
+  id: string;
+  application_id: string;
+  diagnosis: string;
+  products: KitProduct[];
+  additional_notes: string;
+  require_followup: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Doctor {
+  id: string;
+  full_name: string;
+  email: string;
+  phone: string;
+  specialization: string;
+  license_number: string;
+  license_url: string;
+  hospital: string;
+  status: 'pending' | 'approved' | 'rejected';
+  created_at: string;
+  updated_at: string;
+}

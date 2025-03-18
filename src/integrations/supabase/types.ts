@@ -47,22 +47,28 @@ export type Database = {
       }
       admin_users: {
         Row: {
-          created_at: string
+          created_at: string | null
           email: string
           id: string
-          updated_at: string
+          is_admin: boolean | null
+          role: string | null
+          updated_at: string | null
         }
         Insert: {
-          created_at?: string
+          created_at?: string | null
           email: string
-          id: string
-          updated_at?: string
+          id?: string
+          is_admin?: boolean | null
+          role?: string | null
+          updated_at?: string | null
         }
         Update: {
-          created_at?: string
+          created_at?: string | null
           email?: string
           id?: string
-          updated_at?: string
+          is_admin?: boolean | null
+          role?: string | null
+          updated_at?: string | null
         }
         Relationships: []
       }
