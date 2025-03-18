@@ -7,7 +7,8 @@ import {
   MapPin, 
   CreditCard, 
   LogOut, 
-  Settings 
+  Settings,
+  FileCheck
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -17,6 +18,7 @@ const UserDashboardSidebar = () => {
     { name: "Profile", icon: <User size={18} />, path: "/dashboard" },
     { name: "Orders", icon: <ShoppingBag size={18} />, path: "/dashboard/orders" },
     { name: "Wishlist", icon: <Heart size={18} />, path: "/dashboard/wishlist" },
+    { name: "Checkups", icon: <FileCheck size={18} />, path: "/dashboard/checkups" },
     { name: "Addresses", icon: <MapPin size={18} />, path: "/dashboard/addresses" },
     { name: "Payment Methods", icon: <CreditCard size={18} />, path: "/dashboard/payment-methods" },
     { name: "Account Settings", icon: <Settings size={18} />, path: "/dashboard/settings" },

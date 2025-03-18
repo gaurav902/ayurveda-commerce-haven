@@ -1,10 +1,22 @@
 
 import { ReactNode, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { Calendar, ClipboardList, Home, LogOut, Settings, UserRound } from "lucide-react";
+import { 
+  Calendar, 
+  ClipboardList, 
+  Home, 
+  LogOut, 
+  Settings, 
+  UserRound, 
+  Menu, 
+  X, 
+  MessageCircle 
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Doctor } from "@/types";
 
 interface DoctorLayoutProps {
@@ -15,6 +27,7 @@ const DoctorLayout = ({ children }: DoctorLayoutProps) => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
   const [doctor, setDoctor] = useState<Doctor | null>(null);
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
     const checkDoctorStatus = async () => {
@@ -68,6 +81,10 @@ const DoctorLayout = ({ children }: DoctorLayoutProps) => {
     }
   };
 
+  const closeMobileMenu = () => {
+    setMobileOpen(false);
+  };
+
   if (isLoading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
@@ -76,60 +93,100 @@ const DoctorLayout = ({ children }: DoctorLayoutProps) => {
     );
   }
 
+  const NavItems = () => (
+    <>
+      <Button
+        variant="ghost" 
+        className="w-full justify-start"
+        onClick={() => {
+          navigate('/doctor/dashboard');
+          closeMobileMenu();
+        }}
+      >
+        <Home className="mr-2 h-4 w-4" />
+        Dashboard
+      </Button>
+      
+      <Button
+        variant="ghost" 
+        className="w-full justify-start"
+        onClick={() => {
+          navigate('/doctor/applications');
+          closeMobileMenu();
+        }}
+      >
+        <ClipboardList className="mr-2 h-4 w-4" />
+        Checkup Applications
+      </Button>
+      
+      <Button
+        variant="ghost" 
+        className="w-full justify-start"
+        onClick={() => {
+          navigate('/doctor/appointments');
+          closeMobileMenu();
+        }}
+      >
+        <Calendar className="mr-2 h-4 w-4" />
+        Appointments
+      </Button>
+      
+      <Button
+        variant="ghost" 
+        className="w-full justify-start"
+        onClick={() => {
+          navigate('/doctor/chats');
+          closeMobileMenu();
+        }}
+      >
+        <MessageCircle className="mr-2 h-4 w-4" />
+        Patient Chats
+      </Button>
+      
+      <Button
+        variant="ghost" 
+        className="w-full justify-start"
+        onClick={() => {
+          navigate('/doctor/profile');
+          closeMobileMenu();
+        }}
+      >
+        <UserRound className="mr-2 h-4 w-4" />
+        My Profile
+      </Button>
+      
+      <Button
+        variant="ghost" 
+        className="w-full justify-start"
+        onClick={() => {
+          navigate('/doctor/settings');
+          closeMobileMenu();
+        }}
+      >
+        <Settings className="mr-2 h-4 w-4" />
+        Settings
+      </Button>
+    </>
+  );
+
   return (
     <div className="flex min-h-screen bg-gray-100">
-      {/* Sidebar */}
-      <div className="w-64 bg-white p-4 border-r hidden md:block">
-        <div className="py-4 px-2">
-          <h2 className="text-2xl font-bold text-primary">Doctor Portal</h2>
-          <p className="text-sm text-muted-foreground mt-1">Skin & Hair Specialist</p>
+      {/* Sidebar - desktop */}
+      <div className="w-64 bg-white p-4 border-r hidden md:flex flex-col">
+        <div className="py-4 px-2 flex items-center gap-3">
+          <Avatar className="h-10 w-10 bg-primary text-primary-foreground">
+            <AvatarFallback>
+              {doctor?.full_name?.split(' ').map(n => n[0]).join('').toUpperCase() || 'DR'}
+            </AvatarFallback>
+          </Avatar>
+          <div>
+            <h2 className="text-xl font-bold text-primary">Doctor Portal</h2>
+            <p className="text-sm text-muted-foreground">{doctor?.specialization || 'Specialist'}</p>
+          </div>
         </div>
         
         <div className="mt-6 flex flex-col gap-1">
-          <Button
-            variant="ghost" 
-            className="w-full justify-start"
-            onClick={() => navigate('/doctor/dashboard')}
-          >
-            <Home className="mr-2 h-4 w-4" />
-            Dashboard
-          </Button>
-          
-          <Button
-            variant="ghost" 
-            className="w-full justify-start"
-            onClick={() => navigate('/doctor/applications')}
-          >
-            <ClipboardList className="mr-2 h-4 w-4" />
-            Checkup Applications
-          </Button>
-          
-          <Button
-            variant="ghost" 
-            className="w-full justify-start"
-            onClick={() => navigate('/doctor/appointments')}
-          >
-            <Calendar className="mr-2 h-4 w-4" />
-            Appointments
-          </Button>
-          
-          <Button
-            variant="ghost" 
-            className="w-full justify-start"
-            onClick={() => navigate('/doctor/profile')}
-          >
-            <UserRound className="mr-2 h-4 w-4" />
-            My Profile
-          </Button>
-          
-          <Button
-            variant="ghost" 
-            className="w-full justify-start"
-            onClick={() => navigate('/doctor/settings')}
-          >
-            <Settings className="mr-2 h-4 w-4" />
-            Settings
-          </Button>
+          <NavItems />
         </div>
         
         <div className="mt-auto pt-6">
@@ -147,13 +204,56 @@ const DoctorLayout = ({ children }: DoctorLayoutProps) => {
       {/* Mobile header */}
       <div className="md:hidden fixed top-0 left-0 right-0 bg-white border-b z-10">
         <div className="p-4 flex justify-between items-center">
-          <h2 className="text-xl font-bold text-primary">Doctor Portal</h2>
+          <div className="flex items-center gap-2">
+            <Avatar className="h-8 w-8 bg-primary text-primary-foreground">
+              <AvatarFallback>
+                {doctor?.full_name?.split(' ').map(n => n[0]).join('').toUpperCase() || 'DR'}
+              </AvatarFallback>
+            </Avatar>
+            <h2 className="text-xl font-bold text-primary">Doctor Portal</h2>
+          </div>
+          
           {/* Mobile menu button */}
-          <button className="p-2">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16m-7 6h7" />
-            </svg>
-          </button>
+          <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
+            <SheetTrigger asChild>
+              <Button variant="ghost" size="icon">
+                <Menu className="h-6 w-6" />
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="left" className="p-0">
+              <div className="p-6 bg-primary/5">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-2">
+                    <Avatar className="h-10 w-10 bg-primary text-primary-foreground">
+                      <AvatarFallback>
+                        {doctor?.full_name?.split(' ').map(n => n[0]).join('').toUpperCase() || 'DR'}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <h3 className="font-bold">{doctor?.full_name}</h3>
+                      <p className="text-sm text-muted-foreground">{doctor?.specialization}</p>
+                    </div>
+                  </div>
+                  <Button variant="ghost" size="icon" onClick={closeMobileMenu}>
+                    <X className="h-5 w-5" />
+                  </Button>
+                </div>
+              </div>
+              <div className="p-4 flex flex-col gap-1">
+                <NavItems />
+                <div className="mt-8">
+                  <Button
+                    variant="ghost" 
+                    className="w-full justify-start text-red-500 hover:text-red-700 hover:bg-red-50"
+                    onClick={handleSignOut}
+                  >
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Sign Out
+                  </Button>
+                </div>
+              </div>
+            </SheetContent>
+          </Sheet>
         </div>
       </div>
       

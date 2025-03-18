@@ -50,9 +50,11 @@ import EditBlogPost from "./pages/admin/EditBlogPost";
 
 // Skin & Hair Checkup Routes
 import ApplyForCheckup from "./pages/checkup/ApplyForCheckup";
+import UserCheckups from "./pages/dashboard/UserCheckups";
 import DoctorLogin from "./pages/doctor/Login";
 import DoctorRegister from "./pages/doctor/Register";
 import DoctorDashboard from "./pages/doctor/Dashboard";
+import DoctorApplications from "./pages/doctor/Applications";
 import RecommendKit from "./pages/doctor/RecommendKit";
 
 const queryClient = new QueryClient({
@@ -93,6 +95,7 @@ const App = () => (
               <Route path="/doctor/login" element={<DoctorLogin />} />
               <Route path="/doctor/register" element={<DoctorRegister />} />
               <Route path="/doctor/dashboard" element={<DoctorDashboard />} />
+              <Route path="/doctor/applications" element={<DoctorApplications />} />
               <Route path="/doctor/recommend-kit/:id" element={<RecommendKit />} />
               
               {/* Blog Routes */}
@@ -115,6 +118,7 @@ const App = () => (
               <Route path="/dashboard/addresses" element={<PrivateRoute><Addresses /></PrivateRoute>} />
               <Route path="/dashboard/payment-methods" element={<PrivateRoute><PaymentMethods /></PrivateRoute>} />
               <Route path="/dashboard/settings" element={<PrivateRoute><Settings /></PrivateRoute>} />
+              <Route path="/dashboard/checkups" element={<PrivateRoute><UserCheckups /></PrivateRoute>} />
 
               {/* Admin Routes */}
               <Route path="/admin/dashboard" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
