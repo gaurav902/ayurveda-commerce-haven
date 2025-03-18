@@ -93,7 +93,7 @@ const DoctorRegister = () => {
         licenseUrl = fileData?.path || "";
       }
       
-      // Create doctor profile
+      // Create doctor profile with approved status
       const { error: profileError } = await supabase
         .from('doctors')
         .insert({
@@ -105,12 +105,12 @@ const DoctorRegister = () => {
           license_number: formData.licenseNumber,
           license_url: licenseUrl,
           hospital: formData.hospital,
-          status: 'pending',
+          status: 'approved', // Changed from 'pending' to 'approved'
         });
         
       if (profileError) throw profileError;
       
-      toast.success("Registration submitted for review");
+      toast.success("Registration successful! You can now log in");
       navigate("/doctor/login");
     } catch (error: any) {
       console.error("Registration error:", error);
@@ -244,10 +244,6 @@ const DoctorRegister = () => {
                     )}
                   </div>
                 </div>
-              </div>
-              
-              <div className="bg-yellow-50 p-4 rounded-md mt-4 text-sm text-yellow-800">
-                <p><strong>Note:</strong> Your registration will be reviewed by our admin team before you can access the system. This typically takes 1-2 business days.</p>
               </div>
             </CardContent>
             
