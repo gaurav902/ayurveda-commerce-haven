@@ -158,6 +158,15 @@ export interface CheckupApplication {
   updated_at: string;
 }
 
+export interface Message {
+  id: string;
+  application_id: string;
+  sender_id: string;
+  sender_type: 'user' | 'doctor';
+  content: string;
+  created_at: string;
+}
+
 export interface KitProduct {
   name: string;
   description: string;

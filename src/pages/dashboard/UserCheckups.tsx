@@ -22,7 +22,9 @@ const UserCheckups = () => {
   const [selectedApplicationId, setSelectedApplicationId] = useState<string | undefined>();
 
   useEffect(() => {
-    fetchUserApplications();
+    if (user) {
+      fetchUserApplications();
+    }
   }, [user]);
 
   const fetchUserApplications = async () => {

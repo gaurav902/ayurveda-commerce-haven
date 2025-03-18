@@ -7,18 +7,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { CheckupApplication } from "@/types";
+import { CheckupApplication, Message } from "@/types";
 import { Send } from "lucide-react";
 import { toast } from "sonner";
-
-type Message = {
-  id: string;
-  application_id: string;
-  sender_id: string;
-  sender_type: 'user' | 'doctor';
-  content: string;
-  created_at: string;
-};
 
 interface ChatSectionProps {
   applicationId?: string;

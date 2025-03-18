@@ -258,6 +258,44 @@ export type Database = {
         }
         Relationships: []
       }
+      checkup_chat_messages: {
+        Row: {
+          application_id: string
+          content: string
+          created_at: string
+          id: string
+          sender_id: string
+          sender_type: string
+          updated_at: string
+        }
+        Insert: {
+          application_id: string
+          content: string
+          created_at?: string
+          id?: string
+          sender_id: string
+          sender_type: string
+          updated_at?: string
+        }
+        Update: {
+          application_id?: string
+          content?: string
+          created_at?: string
+          id?: string
+          sender_id?: string
+          sender_type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "checkup_chat_messages_application_id_fkey"
+            columns: ["application_id"]
+            isOneToOne: false
+            referencedRelation: "checkup_applications"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       contact_submissions: {
         Row: {
           created_at: string | null
