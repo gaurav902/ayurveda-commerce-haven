@@ -1,10 +1,11 @@
 
-import { ReactNode, useEffect } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Calendar, ClipboardList, Home, LogOut, Settings, UserRound } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Doctor } from "@/types";
 
 interface DoctorLayoutProps {
   children: ReactNode;
@@ -12,8 +13,8 @@ interface DoctorLayoutProps {
 
 const DoctorLayout = ({ children }: DoctorLayoutProps) => {
   const navigate = useNavigate();
-  const [isLoading, setIsLoading] = React.useState(true);
-  const [doctor, setDoctor] = React.useState<any>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [doctor, setDoctor] = useState<Doctor | null>(null);
 
   useEffect(() => {
     const checkDoctorStatus = async () => {
@@ -26,6 +27,7 @@ const DoctorLayout = ({ children }: DoctorLayoutProps) => {
           return;
         }
         
+        // Using the correct type casting for the database query
         const { data: doctorData, error } = await supabase
           .from('doctors')
           .select('*')
@@ -44,7 +46,7 @@ const DoctorLayout = ({ children }: DoctorLayoutProps) => {
           return;
         }
         
-        setDoctor(doctorData);
+        setDoctor(doctorData as Doctor);
       } catch (error) {
         console.error("Error checking doctor status:", error);
         navigate("/doctor/login");

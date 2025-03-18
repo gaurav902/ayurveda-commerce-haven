@@ -186,6 +186,78 @@ export type Database = {
         }
         Relationships: []
       }
+      checkup_applications: {
+        Row: {
+          age: number
+          allergies: string
+          birthmarks: string | null
+          blood_group: string
+          created_at: string
+          current_medications: string | null
+          email: string
+          full_name: string
+          gender: string
+          hair_problem: string
+          id: string
+          medical_conditions: string
+          phone: string
+          previous_treatments: string | null
+          report_url: string | null
+          selfie_urls: string[]
+          skin_problem: string
+          status: string
+          updated_at: string
+          user_id: string
+          want_consultation: boolean | null
+        }
+        Insert: {
+          age: number
+          allergies: string
+          birthmarks?: string | null
+          blood_group: string
+          created_at?: string
+          current_medications?: string | null
+          email: string
+          full_name: string
+          gender: string
+          hair_problem: string
+          id?: string
+          medical_conditions: string
+          phone: string
+          previous_treatments?: string | null
+          report_url?: string | null
+          selfie_urls: string[]
+          skin_problem: string
+          status?: string
+          updated_at?: string
+          user_id: string
+          want_consultation?: boolean | null
+        }
+        Update: {
+          age?: number
+          allergies?: string
+          birthmarks?: string | null
+          blood_group?: string
+          created_at?: string
+          current_medications?: string | null
+          email?: string
+          full_name?: string
+          gender?: string
+          hair_problem?: string
+          id?: string
+          medical_conditions?: string
+          phone?: string
+          previous_treatments?: string | null
+          report_url?: string | null
+          selfie_urls?: string[]
+          skin_problem?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+          want_consultation?: boolean | null
+        }
+        Relationships: []
+      }
       contact_submissions: {
         Row: {
           created_at: string | null
@@ -245,6 +317,89 @@ export type Database = {
           id?: string
         }
         Relationships: []
+      }
+      doctors: {
+        Row: {
+          created_at: string
+          email: string
+          full_name: string
+          hospital: string | null
+          id: string
+          license_number: string
+          license_url: string | null
+          phone: string
+          specialization: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          full_name: string
+          hospital?: string | null
+          id: string
+          license_number: string
+          license_url?: string | null
+          phone: string
+          specialization: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          full_name?: string
+          hospital?: string | null
+          id?: string
+          license_number?: string
+          license_url?: string | null
+          phone?: string
+          specialization?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      kit_recommendations: {
+        Row: {
+          additional_notes: string | null
+          application_id: string
+          created_at: string
+          diagnosis: string
+          id: string
+          products: Json
+          require_followup: boolean | null
+          updated_at: string
+        }
+        Insert: {
+          additional_notes?: string | null
+          application_id: string
+          created_at?: string
+          diagnosis: string
+          id?: string
+          products: Json
+          require_followup?: boolean | null
+          updated_at?: string
+        }
+        Update: {
+          additional_notes?: string | null
+          application_id?: string
+          created_at?: string
+          diagnosis?: string
+          id?: string
+          products?: Json
+          require_followup?: boolean | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "kit_recommendations_application_id_fkey"
+            columns: ["application_id"]
+            isOneToOne: false
+            referencedRelation: "checkup_applications"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       newsletter_subscribers: {
         Row: {
